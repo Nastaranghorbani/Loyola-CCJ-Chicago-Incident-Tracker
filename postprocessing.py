@@ -86,6 +86,11 @@ full_feature_list = ['date','Reported Incident', 'Enforcement Driven Incidents',
 
 
 
+if __name__ == "__main__":
+
+
+
+
 ### Import Data
 
 today = datetime.date.today()
