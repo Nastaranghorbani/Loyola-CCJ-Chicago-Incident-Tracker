@@ -68,8 +68,7 @@ police = gpd.read_file('https://data.cityofchicago.org/api/geospatial/fthy-xz3r?
 
 
 ### Add Offense Map
-
- offense_map = {'simple-cannabis':'Simple-Cannabis', 'is_gun':'Gun Offense',
+offense_map = {'simple-cannabis':'Simple-Cannabis', 'is_gun':'Gun Offense',
                    'crim_sex_offense':'Criminal Sexual Assault', 'is_agg_assault':'Aggravated Assault',
                    'is_violent':'Violent Offense', 'is_burglary':'Burglary',
                    'is_theft':'Theft', 'is_domestic':'is_domestic', 'is_robbery':"Robbery", 'violent_gun':"Violent Gun Offense"}
@@ -89,70 +88,70 @@ full_feature_list = ['date','Reported Incident', 'Enforcement Driven Incidents',
 if __name__ == "__main__":
 
 
-
-
-### Import Data
-
-today = datetime.date.today()
-
-current_yr = today.year
-my_df = []
-
-for year in range(2018, current_yr + 1):
-    inc_data = pd.read_csv(
-        f'https://data.cityofchicago.org/resource/6zsd-86xi.csv?$limit=2000000&$where=date%20between%20%27{year}-01-01T00:00:00%27%20and%20%27{year}-12-31T23:59:59%27'
-    )
-    my_df.append(inc_data)
-
-combined_df = pd.concat(my_df, ignore_index=True)
-print(combined_df.shape)
-
-
-
-### Join Ward Info
-
-combined_df['ward'] = combined_df['ward'].astype(str)
-
-
-### Add Date Features
-
-combined_df['date'] = pd.to_datetime(combined_df['date'], errors='coerce')
-
-
-combined_df['year'] = combined_df['date'].dt.year
-combined_df['month'] = combined_df['date'].dt.month
-combined_df['day'] = combined_df['date'].dt.day
-
-
-
-combined_df['Time'] = combined_df['date'].dt.time
-
-
-combined_df['date'] = combined_df['date'].dt.date
-
-
-combined_df['Reported Incident'] = 1
-
-
-### Add Offense Features
-
-inc_data_processed = offense_features(combined_df)
-
-
-inc_data_processed = inc_data_processed.rename(columns=offense_map)
-
-
-inc_data_merged = inc_data_processed.merge(ward[['ward', 'geometry']], how='left', left_on="ward", right_on='ward').rename(columns={'geometry':"Ward_Geo"})
-
-
-### Subset the Data
-
-inc_data_selected = inc_data_merged[full_feature_list]
-inc_data_selected
-
-### Save the selected features to a CSV file
-inc_data_selected.to_csv('inc_data_selected.csv', index=False)
-#inc_data_selected.to_csv('/Users/nastaranghorbani/Documents/CCJ/Codes/inc_data_selected.csv', index=False)
+    
+    
+    ### Import Data
+    
+    today = datetime.date.today()
+    
+    current_yr = today.year
+    my_df = []
+    
+    for year in range(2018, current_yr + 1):
+        inc_data = pd.read_csv(
+            f'https://data.cityofchicago.org/resource/6zsd-86xi.csv?$limit=2000000&$where=date%20between%20%27{year}-01-01T00:00:00%27%20and%20%27{year}-12-31T23:59:59%27'
+        )
+        my_df.append(inc_data)
+    
+    combined_df = pd.concat(my_df, ignore_index=True)
+    print(combined_df.shape)
+    
+    
+    
+    ### Join Ward Info
+    
+    combined_df['ward'] = combined_df['ward'].astype(str)
+    
+    
+    ### Add Date Features
+    
+    combined_df['date'] = pd.to_datetime(combined_df['date'], errors='coerce')
+    
+    
+    combined_df['year'] = combined_df['date'].dt.year
+    combined_df['month'] = combined_df['date'].dt.month
+    combined_df['day'] = combined_df['date'].dt.day
+    
+    
+    
+    combined_df['Time'] = combined_df['date'].dt.time
+    
+    
+    combined_df['date'] = combined_df['date'].dt.date
+    
+    
+    combined_df['Reported Incident'] = 1
+    
+    
+    ### Add Offense Features
+    
+    inc_data_processed = offense_features(combined_df)
+    
+    
+    inc_data_processed = inc_data_processed.rename(columns=offense_map)
+    
+    
+    inc_data_merged = inc_data_processed.merge(ward[['ward', 'geometry']], how='left', left_on="ward", right_on='ward').rename(columns={'geometry':"Ward_Geo"})
+    
+    
+    ### Subset the Data
+    
+    inc_data_selected = inc_data_merged[full_feature_list]
+    inc_data_selected
+    
+    ### Save the selected features to a CSV file
+    inc_data_selected.to_csv('data/inc_data_selected.csv', index=False)
+    #inc_data_selected.to_csv('/Users/nastaranghorbani/Documents/CCJ/Codes/inc_data_selected.csv', index=False)
 
 
 
