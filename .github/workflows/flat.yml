@@ -1,7 +1,7 @@
-name: data
+name: job
 on:
   schedule:
-    - cron: 0 22 * * *
+    - cron: 0 00 * * *
   workflow_dispatch: {}
   push:
     paths:
@@ -11,10 +11,6 @@ jobs:
   scheduled:
     runs-on: ubuntu-latest
     steps:
-      - name: sudo update
-        run: sudo apt-get update
-      - name: Install Ghostscript
-        run: sudo apt install ghostscript python3-tk
       - name: Check out repo
         uses: actions/checkout@v2 
       - name: setup python
