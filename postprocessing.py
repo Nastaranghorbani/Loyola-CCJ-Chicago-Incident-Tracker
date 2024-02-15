@@ -6,6 +6,7 @@ import geopandas as gpd
 import numpy as np
 import matplotlib.pyplot as plt
 import geopandas as gpd
+import matplotlib.pyplot as plt
 
 
 # Offense features function
