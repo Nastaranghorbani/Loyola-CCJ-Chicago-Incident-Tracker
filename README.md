@@ -9,7 +9,7 @@ This is a Python script that imports the yearly incident data from the Chicago d
 
 - the `flat.yml` specifies the action, triggers the install of ghostscript, and installs the required dependencies. 
 
-- the `postprocess.py` script is then trigged and parses the daily pdf table into a cleaned pandas dataframe. Then, an existing .csv of past jail records is imported and the parsed csv is appended to that file and saved at `data/cook-jail-data.csv`.
+- the `postprocess.py` script is then trigged and parses the daily pdf table into a cleaned pandas dataframe. Then, an existing .csv of past jail records is imported and the parsed csv is appended to that file and saved at `data/...`. 
 
 - The most recent parsed pdf table is saved at `data/...`. 
 
