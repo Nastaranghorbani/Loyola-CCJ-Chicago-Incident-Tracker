@@ -2,17 +2,6 @@
 
 This is a Python script that imports the yearly incident data from the Chicago data portal from 2018.
 
-## Execution :
-
-# Scrape Cook County's Jail Population Report 
-
-A Python script that collects Cook jail population and community correction data. 
-
-# Visualization
-
-[Cook County Jail Population](https://www.datawrapper.de/_/JoeoH/)
-
-[Cook County Community Corrections Population](https://www.datawrapper.de/_/GlakD/)
 
 ## Execution :
 
