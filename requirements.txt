@@ -1,7 +1,4 @@
 pandas
 numpy
-PyPDF2<3.0
-opencv-python
-camelot-py[base]
 geopandas
 matplotlib
