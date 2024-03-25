@@ -83,7 +83,7 @@ comparison_df_diff_only = comparison_df[list(diff_columns.values())]
 comparison_df_diff_only
 
 
-comparison_df_diff_only.to_csv('/Users/nastaranghorbani/Documents/CCJ/datawrapper/comparison.csv', index=False)
+comparison_df_diff_only.to_csv('comparison.csv', index=False)
 
 
 
