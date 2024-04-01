@@ -90,7 +90,7 @@ comparison_df_diff_only.to_csv('comparison.csv', index=False)
 from datawrapper import Datawrapper
 
 # Set up Datawrapper API
-dw = Datawrapper(access_token="Lwu97tMzraxROmm7rNCbgJOnWGaRyXLtdXkTkRRDjx2HQD4NL6BCsvs858Q13oav")
+dw = Datawrapper(access_token="xxxxx")
 
 # Loop through each column and create a chart
 for column in comparison_df_diff_only.columns[1:]:  # Skip the 'week' column
