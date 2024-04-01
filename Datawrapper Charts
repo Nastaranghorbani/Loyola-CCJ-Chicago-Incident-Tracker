@@ -1,0 +1,45 @@
+from datetime import datetime
+import numpy as np
+
+# Get the current date and the current week number
+current_date = datetime.now()
+current_week = current_date.isocalendar().week
+current_year = current_date.year
+
+# Filter out the current week if the data is still being collected
+if current_week == week_sum_filtered['week'].max() and current_year == week_sum_filtered['year'].max():
+    latest_week = week_sum_filtered[week_sum_filtered['year'] == 2024].iloc[-2]
+else:
+    latest_week = week_sum_filtered[week_sum_filtered['year'] == 2024].iloc[-1]
+
+# Get the first day of the latest week
+first_day_of_week = datetime.strptime(f"{latest_week['year']}-W{int(latest_week['week'])}-1", "%Y-W%W-%w").strftime("%B %d")
+
+# Create and update charts with dynamic descriptions
+columns = ['Reported Incident', 'Enforcement Driven Incidents', 'Simple-Cannabis', 'Gun Offense', 'Criminal Sexual Assault', 'Aggravated Assault', 'Violent Offense', 'Burglary', 'Theft', 'Domestic Violence', 'Robbery', 'Violent Gun Offense']
+for column in columns:
+    # Calculate the percentage change, handling division by zero or NaN values
+    avg_value = latest_week[f'{column}_average']
+    if avg_value == 0 or np.isnan(avg_value):
+        percentage_change = 0
+    else:
+        percentage_change = (latest_week[column] - avg_value) / avg_value * 100
+    
+    change_type = "increase" if percentage_change > 0 else "decrease"
+    percentage_change = abs(percentage_change)
+    
+    # Create a new chart
+    chart = dw.create_chart(title=f"Chart for {column}", chart_type="d3-lines", data=week_sum_filtered[['ISO_Week', column]])
+    
+    # Update the chart description
+    description = f"There have been {latest_week[column]} {column.lower()} incidents in Chicago for the week of {first_day_of_week}. This is a {change_type} of {percentage_change:.2f}%. A difference of {latest_week[column] - latest_week[f'{column}_average']:.0f} incidents."
+    dw.update_description(
+        chart["id"],
+        intro=description,
+        source_name=" ",
+        source_url=" ",
+        byline=" "
+    )
+    
+    # Publish the chart
+    dw.publish_chart(chart["id"])
