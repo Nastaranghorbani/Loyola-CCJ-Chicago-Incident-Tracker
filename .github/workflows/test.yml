@@ -19,6 +19,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install pandas geopandas numpy matplotlib datawrapper
     - name: Run script
-      run: python test2.py
+      run: python test3.py
       env:
         DATAWRAPPER_API: ${{ secrets.DATAWRAPPER_API }}
