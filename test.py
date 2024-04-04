@@ -5,8 +5,7 @@ import os
 from datawrapper import Datawrapper
 import matplotlib.pyplot as plt
 import geopandas as gpd
-%matplotlib auto
-
+import matplotlib.pyplot as plt
 
 # Import data
 df=pd.read_csv('https://raw.githubusercontent.com/Nastaranghorbani/Loyola-CCJ-Chicago-Incident-Tracker/main/data/inc_data_selected.csv')
