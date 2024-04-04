@@ -92,8 +92,10 @@ if __name__ == "__main__":
         # Create a new chart
         chart = dw.create_chart(title=f"Chart for {column}", chart_type="d3-lines", data=week_sum[['ISO_Week', column]])
 
+
+        
         # Update the chart description
-        description = f"There have been {latest_week[column]} {column.lower()} incidents in Chicago for the week of {first_day_of_week}. This is a {change_type} of {percentage_change:.2f}%. A difference of {latest_week[column] - latest_week[f'{column}_average']:.0f} incidents."
+        description = f"There have been {HTML_STRING}{latest_week[column]}{HTML_STRING} {column.lower()} incidents in Chicago for the week of {first_day_of_week}. This is a {change_type} of {HTML_STRING}{percentage_change:.2f}%{HTML_STRING}. A difference of {latest_week[column] - latest_week[f'{column}_average']:.0f} incidents."
         dw.update_description(
             chart["id"],
             intro=description,
