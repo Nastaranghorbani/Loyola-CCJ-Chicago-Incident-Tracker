@@ -87,6 +87,14 @@ full_feature_list = ['date','Reported Incident', 'Enforcement Driven Incidents',
 
 
 
+
+
+API_KEY = os.environ['DATAWRAPPER_API']
+dw = Datawrapper(access_token=API_KEY)
+
+
+
+
 if __name__ == "__main__":
 
 
