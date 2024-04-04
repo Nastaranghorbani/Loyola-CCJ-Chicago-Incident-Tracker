@@ -87,11 +87,7 @@ full_feature_list = ['date','Reported Incident', 'Enforcement Driven Incidents',
 
 
 
-HTML_STRING = """<b style="background-color: rgb(255, 191, 0); padding-left: 3px; padding-right: 3px ">"""
 
-
-API_KEY = os.environ['DATAWRAPPER_API']
-dw = Datawrapper(access_token=API_KEY)
 
 
 
