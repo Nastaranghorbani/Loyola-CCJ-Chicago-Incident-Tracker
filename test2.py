@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
     # Get the current date and the current week number
     current_date = datetime.now()
-    current_week = current_date.isocalendar().week
+    current_week = current_date.isocalendar()[1]
     current_year = current_date.year
 
     # Filter out the current week if the data is still being collected
