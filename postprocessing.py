@@ -4,6 +4,8 @@ import pandas as pd
 import datetime
 import geopandas as gpd
 import numpy as np
+from datawrapper import Datawrapper
+import os
 import matplotlib.pyplot as plt
 import geopandas as gpd
 import matplotlib.pyplot as plt
