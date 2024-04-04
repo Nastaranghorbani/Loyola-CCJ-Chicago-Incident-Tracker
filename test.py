@@ -4,8 +4,13 @@ import numpy as np
 import os
 from datawrapper import Datawrapper
 import matplotlib.pyplot as plt
-import geopandas as gpd
-import matplotlib.pyplot as plt
+
+
+
+
+if __name__ == "__main__":
+
+
 
 # Import data
 df=pd.read_csv('https://raw.githubusercontent.com/Nastaranghorbani/Loyola-CCJ-Chicago-Incident-Tracker/main/data/inc_data_selected.csv')
