@@ -11,7 +11,7 @@ This repository contains code for analyzing and visualizing incident data in Chi
 
 - the `postprocess.py` script is then ...
   
-- The most recent table is saved at `data/...`. 
+- The most recent table is saved at `data/inc_data_selected.csv`. 
 
 
 ## Data Notes
