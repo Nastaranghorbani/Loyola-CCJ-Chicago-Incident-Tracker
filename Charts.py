@@ -100,6 +100,14 @@ if __name__ == "__main__":
         f"This is a {change_type} of {HTML_STRING}{percentage_change:.2f}%</b>. "
         f"A difference of {HTML_STRING}{latest_week[column] - latest_week[f'{column}_average']:.0f}</b> incidents."
         )
+        dw.update_description(
+        chart["id"],
+        intro=description,
+        source_name=" ",
+        source_url=" ",
+        byline=" "
+        )
+    
 
 
         # Publish the chart
