@@ -81,3 +81,20 @@ This repository contains code for analyzing and visualizing incident data in Chi
 - Iframe for Violent Gun Offense:
 
 - <iframe title="Chart for Violent Gun Offense" aria-label="Interactive line chart" id="datawrapper-chart-LTywO" src="https://datawrapper.dwcdn.net/LTywO/1/" scrolling="no" frameborder="0" style="border: none;" width="600" height="400" data-external="1"></iframe>
+
+
+
+
+- **Reported Incident:** [View Chart](https://datawrapper.dwcdn.net/2hY3h/1/)
+- **Enforcement Driven Incidents:** [View Chart](https://datawrapper.dwcdn.net/awQmY/1/)
+- **Simple-Cannabis:** [View Chart](https://datawrapper.dwcdn.net/jCErE/1/)
+- **Gun Offense:** [View Chart](https://datawrapper.dwcdn.net/ZKY2l/1/)
+- **Criminal Sexual Assault:** [View Chart](https://datawrapper.dwcdn.net/Xcyjf/1/)
+- **Aggravated Assault:** [View Chart](https://datawrapper.dwcdn.net/i5HEy/1/)
+- **Violent Offense:** [View Chart](https://datawrapper.dwcdn.net/m55At/1/)
+- **Burglary:** [View Chart](https://datawrapper.dwcdn.net/uU4vd/1/)
+- **Theft:** [View Chart](https://datawrapper.dwcdn.net/zGh00/1/)
+- **Domestic Violence:** [View Chart](https://datawrapper.dwcdn.net/Vvd0H/1/)
+- **Robbery:** [View Chart](https://datawrapper.dwcdn.net/uaNFc/1/)
+- **Violent Gun Offense:** [View Chart](https://datawrapper.dwcdn.net/LTywO/1/)
+
