@@ -1,6 +1,6 @@
 # Loyola-CCJ-Chicago-Incident-Tracker
 
-This is a Python script that imports the yearly incident data from the Chicago data portal from 2018.
+This repository contains code for analyzing and visualizing incident data in Chicago. It imports the yearly incident data from the Chicago data portal from 2018. The data is sourced from the City of Chicago's open data portal and includes various types of incidents such as theft, assault, and domestic violence. Our Python script processes this data to uncover trends and insights, helping to better understand the dynamics of crime in Chicago.
 
 
 ## Execution :
@@ -10,6 +10,7 @@ This is a Python script that imports the yearly incident data from the Chicago d
 - the `flat.yml` specifies the action, triggers the install of ghostscript, and installs the required dependencies. 
 
 - the `postprocess.py` script is then ...
+  
 - The most recent table is saved at `data/...`. 
 
 
