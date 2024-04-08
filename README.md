@@ -23,7 +23,7 @@ This is a Python script that imports the yearly incident data from the Chicago d
 
 - Iframe for Reported Incident:
 
-<iframe title="Chart for Reported Incident" aria-label="Interactive line chart" id="datawrapper-chart-2hY3h" src="https://datawrapper.dwcdn.net/2hY3h/1/" scrolling="no" frameborder="0" style="border: none;" width="600" height="400" data-external="1"></iframe>
+- <iframe title="Chart for Reported Incident" aria-label="Interactive line chart" id="datawrapper-chart-2hY3h" src="https://datawrapper.dwcdn.net/2hY3h/1/" scrolling="no" frameborder="0" style="border: none;" width="600" height="400" data-external="1"></iframe>
 
 
 - Iframe for Enforcement Driven Incidents:
