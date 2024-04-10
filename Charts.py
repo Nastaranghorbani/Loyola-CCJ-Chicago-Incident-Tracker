@@ -89,6 +89,17 @@ if __name__ == "__main__":
         change_type = "increase" if percentage_change > 0 else "decrease"
         percentage_change = abs(percentage_change)
 
+        
+        # Check if the last week is a full week
+        last_week = week_sum.iloc[-1]
+        last_week_days = week_sum[(week_sum['year'] == last_week['year']) & (week_sum['week'] == last_week['week'])]
+
+        if len(last_week_days) < 7:
+            # If the last week is not a full week, return the DataFrame up to the latest full week
+            week_sum = week_sum.iloc[:-1]
+
+        week_sum
+        
         # Create a new chart
         chart = dw.create_chart(title=f"Chart for {column}", chart_type="d3-lines", data=week_sum[['ISO_Week', column]])
 
