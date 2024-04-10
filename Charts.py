@@ -97,6 +97,9 @@ if __name__ == "__main__":
         if len(last_week_days) < 7:
             # If the last week is not a full week, return the DataFrame up to the latest full week
             week_sum = week_sum.iloc[:-1]
+        else:
+            # If the last week is a full week, return the DataFrame as is
+            week_sum = week_sum
 
         week_sum
         
