@@ -3,3 +3,9 @@ numpy
 geopandas
 matplotlib
 datawrapper
+arviz
+pymc3
+xarray
+scipy
+orbit
+statsmodels
