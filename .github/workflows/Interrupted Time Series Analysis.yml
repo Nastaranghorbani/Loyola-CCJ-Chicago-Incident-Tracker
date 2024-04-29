@@ -17,22 +17,21 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'  # Specify the Python version, adjust as necessary
+        python-version: '3.9'
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pandas geopandas numpy matplotlib arviz pymc3 xarray scipy statsmodels orbit-ml
 
-    - name: Change to script directory
-      run: cd CCJ/Time_Series
-
-    - name: Run the script
-      run: python "Interrupted time series analysis.py"
+    - name: Change to script directory and run script
+      working-directory: ${{ github.workspace }}/CCJ/Time_Series
+      run: |
+        ls -al  # For debugging
+        python "Interrupted time series analysis.py"
 
     - name: Upload results
       uses: actions/upload-artifact@v3
       with:
         name: analysis-results
-        path: /Users/nastaranghorbani/Documents/CCJ/Time_Series
-
+        path: ${{ github.workspace }}/CCJ/Time_Series/*.csv  
