@@ -25,7 +25,7 @@ import statsmodels.api as sm
 
 
 
-
+  # Function to format the x-axis of matplotlib plots
   def format_x_axis(ax, minor=False):
       # major ticks
       ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y %b"))
@@ -40,7 +40,7 @@ import statsmodels.api as sm
       for label in ax.get_xticklabels(which="both"):
           label.set(rotation=70, horizontalalignment="right")
 
-
+  # Function to plot Bayesian model predictions using ArviZ
   def plot_xY(x, Y, ax):
       quantiles = Y.quantile((0.025, 0.25, 0.5, 0.75, 0.975), dim=("chain", "draw")).transpose()
 
@@ -65,7 +65,7 @@ import statsmodels.api as sm
   figsize = (10, 5)
 
 
-
+  # Calculate a causal effect based on ISO week
   def causal_effect(df):
     
       return (df['ISO_Week'] > treatment_iso_week_str) * 2
@@ -117,7 +117,7 @@ if __name__ == "__main__":
 
 
 
-
+  # Treatment date and convert to ISO week string
   treatment_date = pd.to_datetime("2023-09-18")
   treatment_iso_year = treatment_date.isocalendar().year
   treatment_iso_week = treatment_date.isocalendar().week
@@ -145,6 +145,8 @@ if __name__ == "__main__":
   treatment_iso_week = treatment_date.isocalendar().week
   treatment_iso_week_str = f"{treatment_iso_year}-{treatment_iso_week:02}"
 
+
+  # Split the data into pre- and post-intervention
   mask = week_sum['ISO_Week'] < treatment_iso_week_str
 
   pre = week_sum[mask]
@@ -153,7 +155,7 @@ if __name__ == "__main__":
 
 
 
-
+  # Plotting the intervention analysis
   fig, ax = plt.subplots()
 
   pre['y'].plot(ax=ax, label="Pre-Intervention")
