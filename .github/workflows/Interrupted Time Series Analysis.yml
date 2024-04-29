@@ -27,11 +27,10 @@ jobs:
     - name: Change to script directory and run script
       working-directory: ${{ github.workspace }}/CCJ/Time_Series
       run: |
-        ls -al  # For debugging
         python "Interrupted time series analysis.py"
 
     - name: Upload results
       uses: actions/upload-artifact@v3
       with:
         name: analysis-results
-        path: ${{ github.workspace }}/CCJ/Time_Series/*.csv  
+        path: ${{ github.workspace }}/CCJ/Time_Series/*.csv
