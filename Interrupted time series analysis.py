@@ -196,30 +196,38 @@ if __name__ == "__main__":
 
 
 
-
+# First PyMC model to predict a generic outcome 'y' using the time as predictor
 
   with pm.Model() as model:
     
+      # Load 'time' data into the model; this will be used as the predictor variable
       time = pm.Data("time", pre["time"].to_numpy(), dims="obs_id")
     
+      # Priors for the intercept and slope of the linear regression model
       beta0 = pm.Normal("beta0", 0, 1)
       beta1 = pm.Normal("beta1", 0, 0.2)
     
+      # Deterministic function to compute mean ('mu') based on the linear model
       mu = pm.Deterministic("mu", beta0 + (beta1 * time), dims="obs_id")
+      # Prior for the standard deviation of the residuals
       sigma = pm.HalfNormal("sigma", 2)
     
+      # Likelihood function where observed data 'y' is modeled as normally distributed around 'mu' with 'sigma' standard deviation
       pm.Normal("obs", mu=mu, sigma=sigma, observed=pre["y"].to_numpy(), dims="obs_id")
 
 
 
 
 
-  outcome_variable = 'Theft'  
-
+  outcome_variable = 'Theft' 
+  
+  # Second PyMC model specific to the 'Theft' outcome variable
   with pm.Model() as model:
+      # Similar setup, now specifically using 'Theft' as the outcome variable
       time = pm.Data("time", pre["time"].to_numpy(), dims="obs_id")
       observed_data = pm.Data("observed_data", pre[outcome_variable].to_numpy(), dims="obs_id")
     
+      # Setup the same priors for intercept and slope as in the first model
       beta0 = pm.Normal("beta0", 0, 1)
       beta1 = pm.Normal("beta1", 0, 0.2)
     
