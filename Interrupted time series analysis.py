@@ -171,7 +171,7 @@ if __name__ == "__main__":
 
 
 
-
+  # Prepare the data for more complex time series analysis
   week_sum['Date'] = pd.to_datetime(week_sum['ISO_Week'] + '-1', format="%Y-%W-%w")
 
   week_sum.set_index('Date', inplace=True)
