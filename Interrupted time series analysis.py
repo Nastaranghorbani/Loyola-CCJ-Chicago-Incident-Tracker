@@ -272,6 +272,9 @@ if __name__ == "__main__":
       plt.show()
 
 
+  week_sum.to_csv('data/complete_analysis_results.csv', index=False)
+
+
 
 
 
