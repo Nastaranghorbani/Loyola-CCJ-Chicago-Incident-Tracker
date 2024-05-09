@@ -10,7 +10,7 @@ from orbit.models.dlt import DLT
 from orbit.diagnostics.plot import plot_predicted_data
 from statsmodels.tsa.seasonal import seasonal_decompose
 import statsmodels.api as sm
-
+import datawrapper as dw 
 
 
 
@@ -73,213 +73,123 @@ import statsmodels.api as sm
 
 
 if __name__ == "__main__":
-  
-  # Import data
-  df = pd.read_csv('https://raw.githubusercontent.com/Nastaranghorbani/Loyola-CCJ-Chicago-Incident-Tracker/main/data/inc_data_selected.csv')
+   
+# Import data
+df = pd.read_csv('https://raw.githubusercontent.com/Nastaranghorbani/Loyola-CCJ-Chicago-Incident-Tracker/main/data/inc_data_selected.csv')
 
-  # Convert the 'date' column to a pandas datetime object
-  df['date'] = pd.to_datetime(df['date'])
+# Convert the 'date' column to a pandas datetime object
+df['date'] = pd.to_datetime(df['date'])
 
-  # Extract the ISO week number from the 'date' column and create a new column 'week'
-  df['week'] = df['date'].dt.isocalendar().week
+# Extract the ISO week number and year from the 'date' column
+df['week'] = df['date'].dt.isocalendar().week
+df['year'] = df['date'].dt.year
 
-  # Extract the year from the 'date' column and create a new column 'year'
-  df['year'] = df['date'].dt.year
+# Group the data by 'year' and 'week'
+week_sum = df.groupby(['year', 'week'])[['Reported Incident', 'Enforcement Driven Incidents',
+                                         'Simple-Cannabis', 'Gun Offense', 'Criminal Sexual Assault',
+                                         'Aggravated Assault', 'Violent Offense', 'Burglary', 'Theft',
+                                         'Domestic Violence', 'Robbery', 'Violent Gun Offense']].sum().reset_index()
 
-  # Group the data by 'year' and 'week'
-  df['year'] = df['date'].dt.year
-  df['week'] = df['date'].dt.isocalendar().week
-  week_sum = df.groupby(['year', 'week'])[['Reported Incident', 'Enforcement Driven Incidents',
-                                             'Simple-Cannabis', 'Gun Offense', 'Criminal Sexual Assault',
-                                             'Aggravated Assault', 'Violent Offense', 'Burglary', 'Theft',
-                                             'Domestic Violence', 'Robbery', 'Violent Gun Offense']].sum().reset_index()
+# Create 'ISO_Week' column
+week_sum['ISO_Week'] = week_sum['year'].astype(str) + '-' + week_sum['week'].apply(lambda x: f'{x:02}')
 
-  # Create 'ISO_Week' column
-  week_sum['ISO_Week'] = week_sum['year'].astype(str) + '-' + week_sum['week'].apply(lambda x: f'{x:02}')
+# Treatment date and convert to ISO week string
+treatment_date = pd.to_datetime("2023-09-18")
+treatment_iso_year = treatment_date.isocalendar().year
+treatment_iso_week = treatment_date.isocalendar().week
+treatment_iso_week_str = f"{treatment_iso_year}-{treatment_iso_week:02}"
 
+# Assign time and calculate 'y'
+week_sum = week_sum.assign(time=np.arange(len(week_sum)))
+β0 = 0
+β1 = 0.1
+N = len(week_sum)
+week_sum['y'] = β0 + β1 * week_sum['time'] + causal_effect(week_sum) + norm(0, 0.5).rvs(N)
+week_sum.reset_index(drop=True, inplace=True)
 
+# Split the data into pre- and post-intervention
+mask = week_sum['ISO_Week'] < treatment_iso_week_str
+pre = week_sum[mask]
+post = week_sum[~mask]
 
+# Plotting the intervention analysis
+fig, ax = plt.subplots()
+pre['y'].plot(ax=ax, label="Pre-Intervention")
+post['y'].plot(ax=ax, label="Post-Intervention")
+treatment_index = week_sum[week_sum['ISO_Week'] == treatment_iso_week_str].index.min()
+ax.axvline(treatment_index, color="black", linestyle=":")
+plt.legend()
+plt.show()
 
-  %config InlineBackend.figure_format = 'retina'
-  RANDOM_SEED = 8927
-  rng = np.random.default_rng(RANDOM_SEED)
-  az.style.use("arviz-darkgrid")
+# Prepare the data for more complex time series analysis
+week_sum['Date'] = pd.to_datetime(week_sum['ISO_Week'] + '-1', format="%Y-%W-%w")
+week_sum.set_index('Date', inplace=True)
+pre = week_sum[week_sum.index < pd.to_datetime(treatment_time)]
+post = week_sum[week_sum.index >= pd.to_datetime(treatment_time)]
 
-
-
-  # Treatment date and convert to ISO week string
-  treatment_date = pd.to_datetime("2023-09-18")
-  treatment_iso_year = treatment_date.isocalendar().year
-  treatment_iso_week = treatment_date.isocalendar().week
-  treatment_iso_week_str = f"{treatment_iso_year}-{treatment_iso_week:02}"
-
-  
-  week_sum = week_sum.assign(time=np.arange(len(week_sum)))
-
-  β0 = 0
-  β1 = 0.1
-  N = len(week_sum)
-
-  week_sum['y'] = β0 + β1 * week_sum['time'] + causal_effect(week_sum) + norm(0, 0.5).rvs(N)
-
-  week_sum.reset_index(drop=True, inplace=True)
-  week_sum
-
-
-
-
-  treatment_time= "2023-09-18"
-
-  treatment_date = pd.to_datetime(treatment_time)
-  treatment_iso_year = treatment_date.isocalendar().year
-  treatment_iso_week = treatment_date.isocalendar().week
-  treatment_iso_week_str = f"{treatment_iso_year}-{treatment_iso_week:02}"
-
-
-  # Split the data into pre- and post-intervention
-  mask = week_sum['ISO_Week'] < treatment_iso_week_str
-
-  pre = week_sum[mask]
-  post = week_sum[~mask]
-
-
-
-
-  # Plotting the intervention analysis
-  fig, ax = plt.subplots()
-
-  pre['y'].plot(ax=ax, label="Pre-Intervention")
-  post['y'].plot(ax=ax, label="Post-Intervention")
-
-  treatment_index = week_sum[week_sum['ISO_Week'] == treatment_iso_week_str].index.min()
-
-  ax.axvline(treatment_index, color="black", linestyle=":")
-
-  plt.legend()
-  plt.show()
-
-
-
-
-  # Prepare the data for more complex time series analysis
-  week_sum['Date'] = pd.to_datetime(week_sum['ISO_Week'] + '-1', format="%Y-%W-%w")
-
-  week_sum.set_index('Date', inplace=True)
-
-  pre = week_sum[week_sum.index < pd.to_datetime(treatment_time)]
-  post = week_sum[week_sum.index >= pd.to_datetime(treatment_time)]
-
-  fig, ax = plt.subplots()
-
-  pre['y'].plot(ax=ax, label="Pre-Intervention")
-  post['y'].plot(ax=ax, label="Post-Intervention")
-
-  ax.axvline(pd.to_datetime(treatment_time), color="black", linestyle=":")
-
-  ax.xaxis.set_major_locator(mdates.YearLocator())
-  ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
-
-  plt.xticks(rotation=45)  # Rotate the x-axis labels for better readability
-  plt.legend()
-  plt.show()
-
-
-
+fig, ax = plt.subplots()
+pre['y'].plot(ax=ax, label="Pre-Intervention")
+post['y'].plot(ax=ax, label="Post-Intervention")
+ax.axvline(pd.to_datetime(treatment_time), color="black", linestyle=":")
+ax.xaxis.set_major_locator(mdates.YearLocator())
+ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+plt.xticks(rotation=45)
+plt.legend()
+plt.show()
 
 # First PyMC model to predict a generic outcome 'y' using the time as predictor
+with pm.Model() as model:
+    time = pm.Data("time", pre["time"].to_numpy(), dims="obs_id")
+    beta0 = pm.Normal("beta0", 0, 1)
+    beta1 = pm.Normal("beta1", 0, 0.2)
+    mu = pm.Deterministic("mu", beta0 + (beta1 * time), dims="obs_id")
+    sigma = pm.HalfNormal("sigma", 2)
+    pm.Normal("obs", mu=mu, sigma=sigma, observed=pre["y"].to_numpy(), dims="obs_id")
 
-  with pm.Model() as model:
-    
-      # Load 'time' data into the model; this will be used as the predictor variable
-      time = pm.Data("time", pre["time"].to_numpy(), dims="obs_id")
-    
-      # Priors for the intercept and slope of the linear regression model
-      beta0 = pm.Normal("beta0", 0, 1)
-      beta1 = pm.Normal("beta1", 0, 0.2)
-    
-      # Deterministic function to compute mean ('mu') based on the linear model
-      mu = pm.Deterministic("mu", beta0 + (beta1 * time), dims="obs_id")
-      # Prior for the standard deviation of the residuals
-      sigma = pm.HalfNormal("sigma", 2)
-    
-      # Likelihood function where observed data 'y' is modeled as normally distributed around 'mu' with 'sigma' standard deviation
-      pm.Normal("obs", mu=mu, sigma=sigma, observed=pre["y"].to_numpy(), dims="obs_id")
+# Second PyMC model specific to the 'Theft' outcome variable
+outcome_variable = 'Theft'
+with pm.Model() as model:
+    time = pm.Data("time", pre["time"].to_numpy(), dims="obs_id")
+    observed_data = pm.Data("observed_data", pre[outcome_variable].to_numpy(), dims="obs_id")
+    beta0 = pm.Normal("beta0", 0, 1)
+    beta1 = pm.Normal("beta1", 0, 0.2)
+    mu = pm.Deterministic("mu", beta0 + (beta1 * time), dims="obs_id")
+    sigma = pm.HalfNormal("sigma", 2)
+    pm.Normal("obs", mu=mu, sigma=sigma, observed=observed_data, dims="obs_id")
 
+# Convert 'ISO_Week' to datetime to get correct indexing
+week_sum['date'] = pd.to_datetime(week_sum['ISO_Week'] + '-1', format='%G-%V-%u')
+week_sum.set_index('date', inplace=True)
 
+# Define the treatment time
+treatment_time = pd.to_datetime("2023-09-18")
 
-
-
-  outcome_variable = 'Theft' 
-  
-  # Second PyMC model specific to the 'Theft' outcome variable
-  with pm.Model() as model:
-      # Similar setup, now specifically using 'Theft' as the outcome variable
-      time = pm.Data("time", pre["time"].to_numpy(), dims="obs_id")
-      observed_data = pm.Data("observed_data", pre[outcome_variable].to_numpy(), dims="obs_id")
-    
-      # Setup the same priors for intercept and slope as in the first model
-      beta0 = pm.Normal("beta0", 0, 1)
-      beta1 = pm.Normal("beta1", 0, 0.2)
-    
-      mu = pm.Deterministic("mu", beta0 + (beta1 * time), dims="obs_id")
-    
-      sigma = pm.HalfNormal("sigma", 2)
-    
-      pm.Normal("obs", mu=mu, sigma=sigma, observed=observed_data, dims="obs_id")
-
-
-
-
-
-  # Convert 'ISO_Week' to datetime to get correct indexing
-  week_sum['date'] = pd.to_datetime(week_sum['ISO_Week'] + '-1', format='%G-%V-%u')
-  week_sum.set_index('date', inplace=True)
-
-  # Define the treatment time
-  treatment_time = pd.to_datetime("2023-09-18")
-
-  # List of crime types
-  crime_types = ['Reported Incident', 'Enforcement Driven Incidents', 'Simple-Cannabis', 
+# List of crime types
+crime_types = ['Reported Incident', 'Enforcement Driven Incidents', 'Simple-Cannabis', 
                'Gun Offense', 'Criminal Sexual Assault', 'Aggravated Assault', 
                'Violent Offense', 'Burglary', 'Theft', 'Domestic Violence', 
                'Robbery', 'Violent Gun Offense']
 
-  # For each crime type, perform decomposition and interrupted time series analysis
-  for crime in crime_types:
-      # Decompose the time series to extract the trend and seasonal components
-      decomp = seasonal_decompose(week_sum[crime], period=52, model='additive', extrapolate_trend='freq')
+# For each crime type, perform decomposition and interrupted time series analysis
+for crime in crime_types:
+    decomp = seasonal_decompose(week_sum[crime], period=52, model='additive', extrapolate_trend='freq')
+    week_sum['intervention'] = (week_sum.index >= treatment_time).astype(int)
+    week_sum['trend'] = decomp.trend
+    week_sum['seasonal'] = decomp.seasonal
+    week_sum['trend_intervention'] = week_sum['trend'] * week_sum['intervention']
+    model = sm.OLS(week_sum[crime], sm.add_constant(week_sum[['trend', 'seasonal', 'trend_intervention']])).fit()
+    week_sum[f'predicted_{crime}'] = model.predict(sm.add_constant(week_sum[['trend', 'seasonal', 'trend_intervention']]))
+    plt.figure(figsize=(10, 6))
+    plt.plot(week_sum.index, week_sum[crime], label='Actual')
+    plt.plot(week_sum.index, week_sum[f'predicted_{crime}'], label='Predicted')
+    plt.axvline(x=treatment_time, color='red', linestyle='--', label='Intervention')
+    plt.title(crime)
+    plt.legend()
+    plt.show()
 
-      # The intervention variable, 0 before the treatment time and 1 after
-      week_sum['intervention'] = (week_sum.index >= treatment_time).astype(int)
-    
-      # Combine the trend and seasonal components with the intervention
-      week_sum['trend'] = decomp.trend
-      week_sum['seasonal'] = decomp.seasonal
-      week_sum['trend_intervention'] = week_sum['trend'] * week_sum['intervention']
+# Save results to CSV
+week_sum.to_csv('data/complete_analysis_results.csv', index=False)
 
-      # Fit the interrupted time series model
-      model = sm.OLS(week_sum[crime], sm.add_constant(week_sum[['trend', 'seasonal', 'trend_intervention']])).fit()
-
-      # Predict and plot the results
-      week_sum[f'predicted_{crime}'] = model.predict(sm.add_constant(week_sum[['trend', 'seasonal', 'trend_intervention']]))
-
-      plt.figure(figsize=(10, 6))
-      plt.plot(week_sum.index, week_sum[crime], label='Actual')
-      plt.plot(week_sum.index, week_sum[f'predicted_{crime}'], label='Predicted')
-      plt.axvline(x=treatment_time, color='red', linestyle='--', label='Intervention')
-      plt.title(crime)
-      plt.legend()
-      plt.show()
-
-
-  week_sum.to_csv('data/complete_analysis_results.csv', index=False)
-
-
-
-
-
-
-  
 # Chart IDs dictionary
 chart_ids = {
     'Reported Incident': 'qeS7S',
@@ -327,4 +237,3 @@ def update_and_publish_chart(crime):
 # Update and publish charts for each crime type
 for crime in crime_types:
     update_and_publish_chart(crime)
-
