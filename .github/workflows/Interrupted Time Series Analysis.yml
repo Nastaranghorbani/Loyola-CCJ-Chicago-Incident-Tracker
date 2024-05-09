@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install pandas geopandas numpy matplotlib arviz pymc3 statsmodels scipy orbit-ml
+          pip install pandas geopandas numpy matplotlib arviz pymc statsmodels scipy orbit-ml
 
       - name: Run script
         run: python 'Interrupted time series analysis.py'
