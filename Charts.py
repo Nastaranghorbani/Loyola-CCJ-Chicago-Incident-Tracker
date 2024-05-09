@@ -121,6 +121,12 @@ if __name__ == "__main__":
         source_url=" ",
         byline=" "
         )
+
+
+        # Update the existing chart
+        chart_id = chart_ids[column]
+        dw.update_metadata(chart_id, description=description)
+        dw.add_data(chart_id, week_sum[['ISO_Week', column]])
     
 
 
