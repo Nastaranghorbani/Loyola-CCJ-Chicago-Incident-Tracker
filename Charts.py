@@ -131,7 +131,11 @@ if __name__ == "__main__":
         f"A difference of {HTML_STRING}{latest_week[column] - latest_week[f'{column}_average']:.0f}</b> incidents."
         )
         
-        chart_id = chart_ids[column]
+        chart_id = chart_ids.get(column)
+        if not chart_id:
+            print(f"Chart ID for {column} not found.")
+            continue
+
         dw.update_description(
             chart_id,
             intro=description,
