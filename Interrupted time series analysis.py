@@ -1,23 +1,13 @@
 import pandas as pd
-import geopandas as gpd
 import numpy as np
-import os
-
 import matplotlib.pyplot as plt
-from datetime import datetime
-
-import arviz as az
 import matplotlib.dates as mdates
+from datetime import datetime
+import arviz as az
 import pymc as pm
-import xarray as xr
-
 from scipy.stats import norm
-
-
 from orbit.models.dlt import DLT
 from orbit.diagnostics.plot import plot_predicted_data
-
-
 from statsmodels.tsa.seasonal import seasonal_decompose
 import statsmodels.api as sm
 
