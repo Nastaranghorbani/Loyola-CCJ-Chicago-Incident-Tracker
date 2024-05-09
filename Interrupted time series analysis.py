@@ -278,6 +278,58 @@ if __name__ == "__main__":
 
 
 
+
+  
+# Chart IDs dictionary
+chart_ids = {
+    'Reported Incident': 'qeS7S',
+    'Enforcement Driven Incidents': 'AMeVO',
+    'Simple-Cannabis': '4VXqm',
+    'Gun Offense': 'VFkbY',
+    'Criminal Sexual Assault': 'BkDU0',
+    'Aggravated Assault': 'nis8v',
+    'Violent Offense': 'NFIDi',
+    'Burglary': '9jMj4',
+    'Theft': 'HvDKE',
+    'Domestic Violence': 'W1NrO',
+    'Robbery': '2BNYv',
+    'Violent Gun Offense': 'eG0Xd'
+}
+
+# Base directory for CSV files
+base_dir = 'data/'
+
+# Function to update and publish charts in Datawrapper
+def update_and_publish_chart(crime):
+    file_path = f'{base_dir}{crime.replace(" ", "_").lower()}_predictions.csv'
+    chart_id = chart_ids[crime]
+    
+    with open(file_path, 'r') as file:
+        csv_data = file.read()
+    
+    # Update data in the chart
+    response = dw.add_data(chart_id=chart_id, data=csv_data)
+    
+    # Update chart properties
+    dw.update_chart(chart_id, metadata={
+        'visualize': {
+            'y-grid': True,
+            'y-axis-title': 'Number of Incidents',
+            'x-grid': True
+        }
+    })
+    
+    # Publish the chart and get the public URL
+    dw.publish_chart(chart_id)
+    public_url = dw.get_chart(chart_id)['publicUrl']
+    print(f'Chart for {crime} updated successfully. View at: {public_url}')
+
+# Update and publish charts for each crime type
+for crime in crime_types:
+    update_and_publish_chart(crime)
+
+
+
   # Reset index to make 'date' an explicit column 
   week_sum.reset_index(inplace=True)
 
