@@ -6,6 +6,7 @@ from datawrapper import Datawrapper
 import matplotlib.pyplot as plt
 from datetime import datetime
 
+
 if __name__ == "__main__":
     # Import data
     df = pd.read_csv('https://raw.githubusercontent.com/Nastaranghorbani/Loyola-CCJ-Chicago-Incident-Tracker/main/data/inc_data_selected.csv')
@@ -20,8 +21,6 @@ if __name__ == "__main__":
     df['year'] = df['date'].dt.year
 
     # Group the data by 'year' and 'week'
-    df['year'] = df['date'].dt.year
-    df['week'] = df['date'].dt.isocalendar().week
     week_sum = df.groupby(['year', 'week'])[['Reported Incident', 'Enforcement Driven Incidents',
                                              'Simple-Cannabis', 'Gun Offense', 'Criminal Sexual Assault',
                                              'Aggravated Assault', 'Violent Offense', 'Burglary', 'Theft',
@@ -59,9 +58,6 @@ if __name__ == "__main__":
     API_KEY = os.environ['DATAWRAPPER_API']
     dw = Datawrapper(access_token=API_KEY)
 
-    HTML_STRING = """<b style="background-color: rgb(255, 191, 0); padding-left: 3px; padding-right: 3px ">"""
-
-
     # Get the current date and the current week number
     current_date = datetime.now()
     current_week = current_date.isocalendar()[1]
@@ -89,33 +85,19 @@ if __name__ == "__main__":
         change_type = "increase" if percentage_change > 0 else "decrease"
         percentage_change = abs(percentage_change)
 
-        
-        # Check if the last week is a full week
-        #last_week = week_sum.iloc[-1]
-        #last_week_days = week_sum[(week_sum['year'] == last_week['year']) & (week_sum['week'] == last_week['week'])]
-
-        #if len(last_week_days) < 7:
-            # If the last week is not a full week, return the DataFrame up to the latest full week
-            #week_sum = week_sum.iloc[:-1]
-        #else:
-            # If the last week is a full week, return the DataFrame as is
-            #week_sum = week_sum
-
-        #week_sum
-
-        
         # Create a new chart
         chart = dw.create_chart(title=f"Chart for {column}", chart_type="d3-lines", data=week_sum_filtered[['ISO_Week', column]])
     
         # Update the chart description
         description = f"There have been {latest_week[column]} {column.lower()} incidents in Chicago for the week of {first_day_of_week}. This is a {change_type} of {percentage_change:.2f}%. A difference of {latest_week[column] - latest_week[f'{column}_average']:.0f} incidents."
         dw.update_description(
-        chart["id"],
-        intro=description,
-        source_name=" ",
-        source_url=" ",
-        byline=" "
+            chart["id"],
+            intro=description,
+            source_name=" ",
+            source_url=" ",
+            byline=" "
         )
     
         # Publish the chart
         dw.publish_chart(chart["id"])
+
