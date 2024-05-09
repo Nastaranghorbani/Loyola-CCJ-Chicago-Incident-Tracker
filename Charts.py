@@ -102,6 +102,22 @@ if __name__ == "__main__":
             #week_sum = week_sum
 
         #week_sum
+
+        # Define chart IDs for each column
+        chart_ids = {
+        'Reported Incident': 'chart_id_1',
+        'Enforcement Driven Incidents': 'chart_id_2',
+        'Simple-Cannabis': 'chart_id_3',
+        'Gun Offense': 'chart_id_4',
+        'Criminal Sexual Assault': 'chart_id_5',
+        'Aggravated Assault': 'chart_id_6',
+        'Violent Offense': 'chart_id_7',
+        'Burglary': 'chart_id_8',
+        'Theft': 'chart_id_9',
+        'Domestic Violence': 'chart_id_10',
+        'Robbery': 'chart_id_11',
+        'Violent Gun Offense': 'chart_id_12'
+        }
         
         # Create a new chart
         chart = dw.create_chart(title=f"Chart for {column}", chart_type="d3-lines", data=week_sum[['ISO_Week', column]])
