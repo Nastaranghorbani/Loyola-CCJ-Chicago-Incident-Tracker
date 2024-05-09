@@ -328,36 +328,3 @@ def update_and_publish_chart(crime):
 for crime in crime_types:
     update_and_publish_chart(crime)
 
-
-
-  # Reset index to make 'date' an explicit column 
-  week_sum.reset_index(inplace=True)
-
-  # Ensure dates are sorted and unique
-  week_sum = week_sum.drop_duplicates(subset='date').sort_values('date')
-
-  # Specify the treatment time and create an intervention variable
-  treatment_time = pd.to_datetime("2023-09-18")
-  week_sum['intervention'] = (week_sum['date'] >= treatment_time).astype(int)
-
-  # Iterate over each crime type to perform analysis
-  for crime_type in crime_types:
-      # Initialize the DLT model
-      dlt = DLT(response_col=crime_type, 
-              date_col='date', 
-              regressor_col=['intervention'],
-              seasonality=52, 
-              estimator='stan-map',  # Or 'stan-mcmc' for full Bayesian inference
-              seed=2022)  # For reproducibility
-    
-      # Fit the DLT model
-      dlt.fit(df=week_sum)
-    
-      # Predict using the DLT model
-      predicted_df = dlt.predict(df=week_sum)
-    
-      # Plot the actual vs. predicted values with intervention
-      plot_predicted_data(training_actual_df=week_sum, predicted_df=predicted_df, 
-                        date_col='date', actual_col=crime_type, 
-                        title=f'{crime_type} - Actual vs. Predicted')
-
