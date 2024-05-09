@@ -55,7 +55,7 @@ if __name__ == "__main__":
     print(comparison_df)
 
     # Datawrapper API setup
-    API_KEY = os.environ['DATAWRAPPER_API']
+    API_KEY = os.environ.get('DATAWRAPPER_API')
     dw = Datawrapper(access_token=API_KEY)
 
     # Get the current date and the current week number
@@ -100,4 +100,3 @@ if __name__ == "__main__":
     
         # Publish the chart
         dw.publish_chart(chart["id"])
-
