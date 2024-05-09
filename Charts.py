@@ -130,21 +130,18 @@ if __name__ == "__main__":
         f"This is a {change_type} of {HTML_STRING}{percentage_change:.2f}%</b>. "
         f"A difference of {HTML_STRING}{latest_week[column] - latest_week[f'{column}_average']:.0f}</b> incidents."
         )
+        
+        chart_id = chart_ids[column]
         dw.update_description(
-        chart["id"],
-        intro=description,
-        source_name=" ",
-        source_url=" ",
-        byline=" "
+            chart_id,
+            intro=description,
+            source_name=" ",
+            source_url=" ",
+            byline=" "
         )
 
-
         # Update the existing chart
-        chart_id = chart_ids[column]
-        dw.update_metadata(chart_id, description=description)
         dw.add_data(chart_id, week_sum[['ISO_Week', column]])
-    
-
 
         # Publish the chart
-        dw.publish_chart(chart["id"])
+        dw.publish_chart(chart_id)
