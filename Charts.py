@@ -132,9 +132,7 @@ if __name__ == "__main__":
         )
         
         chart_id = chart_ids.get(column)
-        if not chart_id:
-            print(f"Chart ID for {column} not found.")
-            continue
+        
 
         dw.update_description(
             chart_id,
