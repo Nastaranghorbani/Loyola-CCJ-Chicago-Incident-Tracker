@@ -103,47 +103,19 @@ if __name__ == "__main__":
 
         #week_sum
 
-        # Define chart IDs for each column
-        chart_ids = {
-        'Reported Incident': 'chart_id_1',
-        'Enforcement Driven Incidents': 'chart_id_2',
-        'Simple-Cannabis': 'chart_id_3',
-        'Gun Offense': 'chart_id_4',
-        'Criminal Sexual Assault': 'chart_id_5',
-        'Aggravated Assault': 'chart_id_6',
-        'Violent Offense': 'chart_id_7',
-        'Burglary': 'chart_id_8',
-        'Theft': 'chart_id_9',
-        'Domestic Violence': 'chart_id_10',
-        'Robbery': 'chart_id_11',
-        'Violent Gun Offense': 'chart_id_12'
-        }
         
         # Create a new chart
-        chart = dw.create_chart(title=f"Chart for {column}", chart_type="d3-lines", data=week_sum[['ISO_Week', column]])
-
-
-        
-        # Update the chart description
-        description = (
-        f"There have been {latest_week[column]} {column.lower()} incidents in Chicago for the week of {first_day_of_week}. "
-        f"This is a {change_type} of {HTML_STRING}{percentage_change:.2f}%</b>. "
-        f"A difference of {HTML_STRING}{latest_week[column] - latest_week[f'{column}_average']:.0f}</b> incidents."
-        )
-        
-        chart_id = chart_ids.get(column)
-        
-
-        dw.update_description(
-            chart_id,
-            intro=description,
-            source_name=" ",
-            source_url=" ",
-            byline=" "
-        )
-
-        # Update the existing chart
-        dw.add_data(chart_id, week_sum[['ISO_Week', column]])
-
-        # Publish the chart
-        dw.publish_chart(chart_id)
+    chart = dw.create_chart(title=f"Chart for {column}", chart_type="d3-lines", data=week_sum_filtered[['ISO_Week', column]])
+    
+    # Update the chart description
+    description = f"There have been {latest_week[column]} {column.lower()} incidents in Chicago for the week of {first_day_of_week}. This is a {change_type} of {percentage_change:.2f}%. A difference of {latest_week[column] - latest_week[f'{column}_average']:.0f} incidents."
+    dw.update_description(
+        chart["id"],
+        intro=description,
+        source_name=" ",
+        source_url=" ",
+        byline=" "
+    )
+    
+    # Publish the chart
+    dw.publish_chart(chart["id"])
