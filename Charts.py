@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 
 
+
 if __name__ == "__main__":
     # Import data
     df = pd.read_csv('https://raw.githubusercontent.com/Nastaranghorbani/Loyola-CCJ-Chicago-Incident-Tracker/main/data/inc_data_selected.csv')
@@ -74,6 +75,23 @@ if __name__ == "__main__":
 
     # Create and update charts with dynamic descriptions
     columns = ['Reported Incident', 'Enforcement Driven Incidents', 'Simple-Cannabis', 'Gun Offense', 'Criminal Sexual Assault', 'Aggravated Assault', 'Violent Offense', 'Burglary', 'Theft', 'Domestic Violence', 'Robbery', 'Violent Gun Offense']
+
+    # Chart IDs dictionary to store the chart IDs for each crime type
+    chart_ids = {
+        'Reported Incident': 'qeS7S',
+        'Enforcement Driven Incidents': 'AMeVO',
+        'Simple-Cannabis': '4VXqm',
+        'Gun Offense': 'VFkbY',
+        'Criminal Sexual Assault': 'BkDU0',
+        'Aggravated Assault': 'nis8v',
+        'Violent Offense': 'NFIDi',
+        'Burglary': '9jMj4',
+        'Theft': 'HvDKE',
+        'Domestic Violence': 'W1NrO',
+        'Robbery': '2BNYv',
+        'Violent Gun Offense': 'eG0Xd'
+    }
+
     for column in columns:
         # Calculate the percentage change, handling division by zero or NaN values
         avg_value = latest_week[f'{column}_average']
@@ -85,18 +103,21 @@ if __name__ == "__main__":
         change_type = "increase" if percentage_change > 0 else "decrease"
         percentage_change = abs(percentage_change)
 
-        # Create a new chart
-        chart = dw.create_chart(title=f"Chart for {column}", chart_type="d3-lines", data=week_sum_filtered[['ISO_Week', column]])
-    
+        # Check if the chart already exists
+        chart_id = chart_ids[column]
+
+        # Update the chart data
+        dw.add_data(chart_id, week_sum_filtered[['ISO_Week', column]].to_csv(index=False))
+
         # Update the chart description
         description = f"There have been {latest_week[column]} {column.lower()} incidents in Chicago for the week of {first_day_of_week}. This is a {change_type} of {percentage_change:.2f}%. A difference of {latest_week[column] - latest_week[f'{column}_average']:.0f} incidents."
         dw.update_description(
-            chart["id"],
+            chart_id,
             intro=description,
             source_name=" ",
             source_url=" ",
             byline=" "
         )
-    
+
         # Publish the chart
-        dw.publish_chart(chart["id"])
+        dw.publish_chart(chart_id)
