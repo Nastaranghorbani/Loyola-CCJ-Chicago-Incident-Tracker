@@ -105,17 +105,17 @@ if __name__ == "__main__":
 
         
         # Create a new chart
-    chart = dw.create_chart(title=f"Chart for {column}", chart_type="d3-lines", data=week_sum_filtered[['ISO_Week', column]])
+        chart = dw.create_chart(title=f"Chart for {column}", chart_type="d3-lines", data=week_sum_filtered[['ISO_Week', column]])
     
-    # Update the chart description
-    description = f"There have been {latest_week[column]} {column.lower()} incidents in Chicago for the week of {first_day_of_week}. This is a {change_type} of {percentage_change:.2f}%. A difference of {latest_week[column] - latest_week[f'{column}_average']:.0f} incidents."
-    dw.update_description(
+        # Update the chart description
+        description = f"There have been {latest_week[column]} {column.lower()} incidents in Chicago for the week of {first_day_of_week}. This is a {change_type} of {percentage_change:.2f}%. A difference of {latest_week[column] - latest_week[f'{column}_average']:.0f} incidents."
+        dw.update_description(
         chart["id"],
         intro=description,
         source_name=" ",
         source_url=" ",
         byline=" "
-    )
+        )
     
-    # Publish the chart
-    dw.publish_chart(chart["id"])
+        # Publish the chart
+        dw.publish_chart(chart["id"])
