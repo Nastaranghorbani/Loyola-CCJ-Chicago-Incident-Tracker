@@ -1,26 +1,31 @@
-name: Interrupted Time Series Analysis Workflow
+name: Interrupted time series analysis
 
 on:
   push:
-    paths:
-      - 'Interrupted time series analysis.py'
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v2
+      name: Check out repository code
 
-      - name: Set up Python environment
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pandas numpy matplotlib arviz pymc statsmodels datawrapper
+    
+    - name: Run script
+      run: python "Interrupted time series analysis.py"
 
-      - name: Install dependencies
-        run: |
-          pip install pandas geopandas numpy matplotlib arviz pymc statsmodels scipy orbit-ml
-
-      - name: Run script
-        run: python 'Interrupted time series analysis.py'
