@@ -1,4 +1,4 @@
-name: Orbit Model
+name: Run Python Script on GitHub Actions
 
 on:
   push:
@@ -16,14 +16,15 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v2
 
-    - name: Set Up Python 3.8
+    - name: Set Up Python 3.9
       uses: actions/setup-python@v2
       with:
-        python-version: '3.8'
+        python-version: '3.9'
 
     - name: Install Dependencies
       run: |
-        pip install pandas matplotlib numpy orbit-py
+        pip install --upgrade pip
+        pip install pandas matplotlib numpy orbit-ml
 
     - name: Run Python Script
       run: python "Interrupted time series analysis-Filtered data-Orbit Model.py"
