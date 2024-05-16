@@ -26,4 +26,4 @@ jobs:
           pip install pandas numpy matplotlib arviz pymc statsmodels
 
       - name: Run Python script
-        run: python "Interrupted time series analysis.py"  
+        run: python "Interrupted Time Series Analysis.py"  
