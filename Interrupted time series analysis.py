@@ -12,7 +12,11 @@ import os
 from datawrapper import Datawrapper
 
 # Retrieve Datawrapper access token from environment variable
-dw = Datawrapper(access_token=os.getenv('DATAWRAPPER_ACCESS_TOKEN'))
+access_token = os.getenv('DATAWRAPPER_ACCESS_TOKEN')
+if not access_token:
+    raise ValueError("No Datawrapper access token found in environment variables")
+
+dw = Datawrapper(access_token=access_token)
 
 # Function to format the x-axis of matplotlib plots
 def format_x_axis(ax, minor=False):
