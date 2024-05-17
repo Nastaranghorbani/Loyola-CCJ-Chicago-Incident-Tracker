@@ -13,7 +13,9 @@ from datawrapper import Datawrapper
 
 # Datawrapper API setup
 API_KEY = os.environ.get('DATAWRAPPER_API')
-
+if not API_KEY:
+    print("Error: No Datawrapper API key found in environment variables.")
+    exit(1)
 
 dw = Datawrapper(access_token=API_KEY)
 
@@ -52,6 +54,7 @@ def update_and_publish_chart(crime, base_dir, chart_ids):
     dw.add_data(chart_id, file_path)
     
     dw.update_chart(chart_id, {
+        'title': f'{crime} - Observed vs Predicted',
         'visualize': {
             'y-grid': True,
             'y-axis-title': 'Number of Incidents',
