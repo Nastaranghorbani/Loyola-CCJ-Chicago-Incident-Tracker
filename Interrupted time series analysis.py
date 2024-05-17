@@ -11,12 +11,11 @@ import statsmodels.api as sm
 import os
 from datawrapper import Datawrapper
 
-# Retrieve Datawrapper access token from environment variable
-access_token = os.getenv('DATAWRAPPER_ACCESS_TOKEN')
-if not access_token:
-    raise ValueError("No Datawrapper access token found in environment variables")
+# Datawrapper API setup
+API_KEY = os.environ.get('DATAWRAPPER_API')
 
-dw = Datawrapper(access_token=access_token)
+
+dw = Datawrapper(access_token=API_KEY)
 
 # Function to format the x-axis of matplotlib plots
 def format_x_axis(ax, minor=False):
