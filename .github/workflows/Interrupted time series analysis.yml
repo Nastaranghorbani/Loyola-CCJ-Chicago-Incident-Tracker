@@ -1,0 +1,35 @@
+name: Run Interrupted Time Series Analysis
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  run_analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pandas numpy matplotlib arviz pymc3 scipy orbit-ml statsmodels datawrapper-api
+
+    - name: Run analysis script
+      run: python "Interrupted time series analysis.py"
+
+    - name: Upload analysis results
+      uses: actions/upload-artifact@v3
+      with:
+        name: analysis-results
+        path: data/complete_analysis_results.csv
