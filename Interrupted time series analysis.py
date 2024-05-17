@@ -53,8 +53,10 @@ def update_and_publish_chart(crime, base_dir, chart_ids):
 
     dw.add_data(chart_id, file_path)
     
+    title = f'{crime} - Observed vs Predicted'
+    
     dw.update_chart(chart_id, {
-        'title': f'{crime} - Observed vs Predicted',
+        'title': str(title),  # Ensure title is a string
         'visualize': {
             'y-grid': True,
             'y-axis-title': 'Number of Incidents',
@@ -182,4 +184,3 @@ if __name__ == "__main__":
 
     for crime in crime_types:
         update_and_publish_chart(crime, base_dir, chart_ids)
-
