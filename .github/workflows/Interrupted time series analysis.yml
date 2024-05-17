@@ -26,6 +26,8 @@ jobs:
         pip install pandas numpy matplotlib arviz pymc scipy==1.9.3 statsmodels datawrapper
 
     - name: Run analysis script
+      env:
+        DATAWRAPPER_API: ${{ secrets.DATAWRAPPER_API }}
       run: python "Interrupted time series analysis.py"
 
     - name: Upload analysis results
