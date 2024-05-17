@@ -13,9 +13,6 @@ from datawrapper import Datawrapper
 
 # Datawrapper API setup
 API_KEY = os.environ.get('DATAWRAPPER_API')
-if not API_KEY:
-    print("Error: No Datawrapper API key found in environment variables.")
-    exit(1)
 
 dw = Datawrapper(access_token=API_KEY)
 
