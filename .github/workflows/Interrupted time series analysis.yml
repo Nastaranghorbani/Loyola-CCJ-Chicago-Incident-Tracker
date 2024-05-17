@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pandas numpy matplotlib arviz pymc scipy orbit-ml statsmodels datawrapper
+        pip install pandas numpy matplotlib arviz pymc scipy==1.9.3 orbit-ml statsmodels datawrapper
 
     - name: Run analysis script
       run: python "Interrupted time series analysis.py"
