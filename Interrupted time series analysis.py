@@ -182,3 +182,4 @@ if __name__ == "__main__":
 
     for crime in crime_types:
         update_and_publish_chart(crime, base_dir, chart_ids)
+
