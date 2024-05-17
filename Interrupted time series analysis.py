@@ -14,6 +14,7 @@ from datawrapper import Datawrapper
 # Datawrapper API setup
 API_KEY = os.environ.get('DATAWRAPPER_API')
 
+
 dw = Datawrapper(access_token=API_KEY)
 
 # Function to format the x-axis of matplotlib plots
@@ -48,9 +49,9 @@ def update_and_publish_chart(crime, base_dir, chart_ids):
         print(f"File not found: {file_path}")
         return
 
-    response = dw.add_data(chart_id, file_path)
+    dw.add_data(chart_id, file_path)
     
-    dw.update_metadata(chart_id, {
+    dw.update_chart(chart_id, {
         'visualize': {
             'y-grid': True,
             'y-axis-title': 'Number of Incidents',
@@ -59,7 +60,7 @@ def update_and_publish_chart(crime, base_dir, chart_ids):
     })
     
     dw.publish_chart(chart_id)
-    public_url = dw.get_chart_metadata(chart_id)['publicUrl']
+    public_url = dw.get_chart(chart_id)['publicUrl']
     print(f'Chart for {crime} updated successfully. View at: {public_url}')
 
 if __name__ == "__main__":
