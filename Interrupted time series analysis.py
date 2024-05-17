@@ -91,9 +91,13 @@ if __name__ == "__main__":
     # Define the treatment time
     treatment_time = pd.to_datetime("2023-09-18")
 
+    # Convert 'ISO_Week' to datetime to get correct indexing
+    week_sum['Date'] = pd.to_datetime(week_sum['ISO_Week'] + '-1', format="%Y-%W-%w")
+    week_sum.set_index('Date', inplace=True)
+
     # Split the data into pre- and post-intervention
-    pre = week_sum[week_sum.index < pd.to_datetime(treatment_time)]
-    post = week_sum[week_sum.index >= pd.to_datetime(treatment_time)]
+    pre = week_sum[week_sum.index < treatment_time]
+    post = week_sum[week_sum.index >= treatment_time]
 
     # Plotting the intervention analysis
     fig, ax = plt.subplots()
@@ -103,10 +107,6 @@ if __name__ == "__main__":
     ax.axvline(treatment_index, color="black", linestyle=":")
     plt.legend()
     plt.show()
-
-    # Prepare the data for more complex time series analysis
-    week_sum['Date'] = pd.to_datetime(week_sum['ISO_Week'] + '-1', format="%Y-%W-%w")
-    week_sum.set_index('Date', inplace=True)
 
     fig, ax = plt.subplots()
     pre['y'].plot(ax=ax, label="Pre-Intervention")
@@ -137,10 +137,6 @@ if __name__ == "__main__":
         mu = pm.Deterministic("mu", beta0 + (beta1 * time), dims="obs_id")
         sigma = pm.HalfNormal("sigma", 2)
         pm.Normal("obs", mu=mu, sigma=sigma, observed=observed_data, dims="obs_id")
-
-    # Convert 'ISO_Week' to datetime to get correct indexing
-    week_sum['date'] = pd.to_datetime(week_sum['ISO_Week'] + '-1', format='%G-%V-%u')
-    week_sum.set_index('date', inplace=True)
 
     # List of crime types
     crime_types = ['Reported Incident', 'Enforcement Driven Incidents', 'Simple-Cannabis',
