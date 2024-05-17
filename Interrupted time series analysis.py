@@ -8,8 +8,11 @@ import pymc as pm
 from scipy.stats import norm
 from statsmodels.tsa.seasonal import seasonal_decompose
 import statsmodels.api as sm
-import datawrapper as dw
 import os
+from datawrapper import Datawrapper
+
+# Initialize Datawrapper with API token
+dw = Datawrapper(access_token='YOUR_DATAWRAPPER_ACCESS_TOKEN')
 
 # Function to format the x-axis of matplotlib plots
 def format_x_axis(ax, minor=False):
@@ -43,12 +46,9 @@ def update_and_publish_chart(crime, base_dir, chart_ids):
         print(f"File not found: {file_path}")
         return
 
-    with open(file_path, 'r') as file:
-        csv_data = file.read()
+    response = dw.add_data(chart_id, file_path)
     
-    response = dw.add_data(chart_id=chart_id, data=csv_data)
-    
-    dw.update_chart(chart_id, metadata={
+    dw.update_metadata(chart_id, {
         'visualize': {
             'y-grid': True,
             'y-axis-title': 'Number of Incidents',
@@ -57,7 +57,7 @@ def update_and_publish_chart(crime, base_dir, chart_ids):
     })
     
     dw.publish_chart(chart_id)
-    public_url = dw.get_chart(chart_id)['publicUrl']
+    public_url = dw.get_metadata(chart_id)['publicUrl']
     print(f'Chart for {crime} updated successfully. View at: {public_url}')
 
 if __name__ == "__main__":
@@ -160,18 +160,18 @@ if __name__ == "__main__":
         week_sum.to_csv(file_path, columns=['ISO_Week', f'predicted_{crime}'], index=False)
 
     chart_ids = {
-        'Reported Incident': 'xxxxxx',
-        'Enforcement Driven Incidents': 'xxxxxx',
-        'Simple-Cannabis': 'xxxxxx',
-        'Gun Offense': 'xxxxxx',
-        'Criminal Sexual Assault': 'xxxxxx',
-        'Aggravated Assault': 'xxxxxx',
-        'Violent Offense': 'xxxxxx',
-        'Burglary': 'xxxxxx',
-        'Theft': 'xxxxxx',
-        'Domestic Violence': 'xxxxxx',
-        'Robbery': 'xxxxxx',
-        'Violent Gun Offense': 'xxxxxx'
+        'Reported Incident': 'qeS7S',
+        'Enforcement Driven Incidents': 'AMeVO',
+        'Simple-Cannabis': '4VXqm',
+        'Gun Offense': 'VFkbY',
+        'Criminal Sexual Assault': 'BkDU0',
+        'Aggravated Assault': 'nis8v',
+        'Violent Offense': 'NFIDi',
+        'Burglary': '9jMj4',
+        'Theft': 'HvDKE',
+        'Domestic Violence': 'W1NrO',
+        'Robbery': '2BNYv',
+        'Violent Gun Offense': 'eG0Xd'
     }
 
     for crime in crime_types:
