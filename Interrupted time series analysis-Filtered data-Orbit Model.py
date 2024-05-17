@@ -6,8 +6,8 @@ from datetime import datetime
 from orbit.models import DLT
 from orbit.diagnostics.plot import plot_predicted_data
 
-
 if __name__ == "__main__":
+
   # Import data
   df = pd.read_csv('https://raw.githubusercontent.com/Nastaranghorbani/Loyola-CCJ-Chicago-Incident-Tracker/main/data/inc_data_selected.csv')
 
@@ -39,8 +39,11 @@ if __name__ == "__main__":
   # Convert 'ISO_Week' to datetime and assign to 'Date', using .loc for safe in-place modification
   filtered_data.loc[:, 'Date'] = pd.to_datetime(filtered_data['ISO_Week'] + '0', format='%Y-%W%w')
 
+  # Define the treatment time
+  treatment_time = '2023-09-18'
+
   # Set the 'intervention' column
-  filtered_data.loc[:, 'intervention'] = (filtered_data['Date'] >= '2023-09-18').astype(int)
+  filtered_data.loc[:, 'intervention'] = (filtered_data['Date'] >= treatment_time).astype(int)
 
   def perform_its_analysis(data, crime_type):
       print(f"Analyzing {crime_type}")
@@ -50,7 +53,7 @@ if __name__ == "__main__":
     
       # The model with the intervention
       model = DLT(response_col='y', date_col='ds', seasonality=52, estimator='stan-map', 
-                regression_penalty='lasso', regressor_col=['intervention'])
+                  regression_penalty='lasso', regressor_col=['intervention'])
     
       # Fit the model
       model.fit(df=ts_data)
