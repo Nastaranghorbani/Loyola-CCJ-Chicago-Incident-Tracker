@@ -60,7 +60,7 @@ def update_and_publish_chart(crime, base_dir, chart_ids):
     })
     
     dw.publish_chart(chart_id)
-    public_url = dw.get_chart(chart_id)['publicUrl']
+    public_url = dw.get_chart_metadata(chart_id)['publicUrl']
     print(f'Chart for {crime} updated successfully. View at: {public_url}')
 
 if __name__ == "__main__":
