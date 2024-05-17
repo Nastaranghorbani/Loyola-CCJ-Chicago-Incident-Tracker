@@ -88,10 +88,12 @@ if __name__ == "__main__":
     week_sum['y'] = β0 + β1 * week_sum['time'] + causal_effect(week_sum) + norm(0, 0.5).rvs(N)
     week_sum.reset_index(drop=True, inplace=True)
 
+    # Define the treatment time
+    treatment_time = pd.to_datetime("2023-09-18")
+
     # Split the data into pre- and post-intervention
-    mask = week_sum['ISO_Week'] < treatment_iso_week_str
-    pre = week_sum[mask]
-    post = week_sum[~mask]
+    pre = week_sum[week_sum.index < pd.to_datetime(treatment_time)]
+    post = week_sum[week_sum.index >= pd.to_datetime(treatment_time)]
 
     # Plotting the intervention analysis
     fig, ax = plt.subplots()
@@ -105,8 +107,6 @@ if __name__ == "__main__":
     # Prepare the data for more complex time series analysis
     week_sum['Date'] = pd.to_datetime(week_sum['ISO_Week'] + '-1', format="%Y-%W-%w")
     week_sum.set_index('Date', inplace=True)
-    pre = week_sum[week_sum.index < pd.to_datetime(treatment_time)]
-    post = week_sum[week_sum.index >= pd.to_datetime(treatment_time)]
 
     fig, ax = plt.subplots()
     pre['y'].plot(ax=ax, label="Pre-Intervention")
@@ -142,9 +142,6 @@ if __name__ == "__main__":
     week_sum['date'] = pd.to_datetime(week_sum['ISO_Week'] + '-1', format='%G-%V-%u')
     week_sum.set_index('date', inplace=True)
 
-    # Define the treatment time
-    treatment_time = pd.to_datetime("2023-09-18")
-
     # List of crime types
     crime_types = ['Reported Incident', 'Enforcement Driven Incidents', 'Simple-Cannabis',
                    'Gun Offense', 'Criminal Sexual Assault', 'Aggravated Assault',
@@ -170,3 +167,51 @@ if __name__ == "__main__":
 
     # Save results to CSV
     week_sum.to_csv("data/complete_analysis_results.csv")
+
+# Chart IDs dictionary
+chart_ids = {
+    'Reported Incident': 'qeS7S',
+    'Enforcement Driven Incidents': 'AMeVO',
+    'Simple-Cannabis': '4VXqm',
+    'Gun Offense': 'VFkbY',
+    'Criminal Sexual Assault': 'BkDU0',
+    'Aggravated Assault': 'nis8v',
+    'Violent Offense': 'NFIDi',
+    'Burglary': '9jMj4',
+    'Theft': 'HvDKE',
+    'Domestic Violence': 'W1NrO',
+    'Robbery': '2BNYv',
+    'Violent Gun Offense': 'eG0Xd'
+}
+
+# Base directory for CSV files
+base_dir = 'data/'
+
+# Function to update and publish charts in Datawrapper
+def update_and_publish_chart(crime):
+    file_path = f'{base_dir}{crime.replace(" ", "_").lower()}_predictions.csv'
+    chart_id = chart_ids[crime]
+    
+    with open(file_path, 'r') as file:
+        csv_data = file.read()
+    
+    # Update data in the chart
+    response = dw.add_data(chart_id=chart_id, data=csv_data)
+    
+    # Update chart properties
+    dw.update_chart(chart_id, metadata={
+        'visualize': {
+            'y-grid': True,
+            'y-axis-title': 'Number of Incidents',
+            'x-grid': True
+        }
+    })
+    
+    # Publish the chart and get the public URL
+    dw.publish_chart(chart_id)
+    public_url = dw.get_chart(chart_id)['publicUrl']
+    print(f'Chart for {crime} updated successfully. View at: {public_url}')
+
+# Update and publish charts for each crime type
+for crime in crime_types:
+    update_and_publish_chart(crime)
