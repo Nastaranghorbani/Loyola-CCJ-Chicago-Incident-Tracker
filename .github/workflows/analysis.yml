@@ -1,46 +1,35 @@
-name: Crime Data Analysis and Visualization
+name: Run Interrupted Time Series Analysis
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  analysis:
+  run_analysis:
     runs-on: ubuntu-latest
-
-    env:
-      DATAWRAPPER_API: ${{ secrets.DATAWRAPPER_API }}
-
+    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9'
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pandas numpy matplotlib arviz pymc scipy statsmodels datawrapper-python
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pandas numpy matplotlib arviz pymc scipy statsmodels datawrapper
+    - name: Set up Datawrapper API key
+      env:
+        DATAWRAPPER_API: ${{ secrets.DATAWRAPPER_API }}
+      run: echo "Datawrapper API key set"
 
-      - name: Verify current directory
-        run: |
-          echo "Current directory:"
-          pwd
-          echo "Listing contents of current directory:"
-          ls -la
-
-      - name: Verify script file exists
-        run: |
-          if [ ! -f "Interrupted time series analysis.py" ]; then
-            echo "Error: Script file 'Interrupted time series analysis.py' not found."
-            exit 1
-          fi
-
-      - name: Run analysis script
-        run: |
-          python "Interrupted.py"
+    - name: Run Interrupted Time Series Analysis
+      run: python Interrupted.py
