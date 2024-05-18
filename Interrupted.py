@@ -9,15 +9,7 @@ from scipy.stats import norm
 from statsmodels.tsa.seasonal import seasonal_decompose
 import statsmodels.api as sm
 import os
-from datawrapper import Datawrapper
-
-# Datawrapper API setup
-API_KEY = os.environ.get('DATAWRAPPER_API')
-if not API_KEY:
-    print("Error: No Datawrapper API key found in environment variables.")
-    exit(1)
-
-dw = Datawrapper(access_token=API_KEY)
+import requests
 
 # Function to format the x-axis of matplotlib plots
 def format_x_axis(ax, minor=False):
@@ -42,7 +34,7 @@ def plot_xY(x, Y, ax):
 def causal_effect(df, treatment_iso_week_str):
     return (df['ISO_Week'] > treatment_iso_week_str) * 2
 
-# Function to update and publish charts in Datawrapper
+# Function to update and publish charts in Datawrapper using requests
 def update_and_publish_chart(crime, base_dir, chart_ids):
     file_path = f'{base_dir}{crime.replace(" ", "_").lower()}_predictions.csv'
     chart_id = chart_ids[crime]
@@ -51,22 +43,56 @@ def update_and_publish_chart(crime, base_dir, chart_ids):
         print(f"File not found: {file_path}")
         return
 
-    dw.add_data(chart_id, file_path)
+    with open(file_path, 'rb') as f:
+        data = f.read()
     
-    title = f'{crime} - Observed vs Predicted'
+    # Upload data to Datawrapper
+    headers = {
+        'Authorization': f'Bearer {os.environ["DATAWRAPPER_API"]}',
+        'Content-Type': 'text/csv'
+    }
     
-    dw.update_chart(chart_id, {
-        'title': str(title),  # Ensure title is a string
-        'visualize': {
-            'y-grid': True,
-            'y-axis-title': 'Number of Incidents',
-            'x-grid': True
+    response = requests.put(
+        f'https://api.datawrapper.de/v3/charts/{chart_id}/data',
+        headers=headers,
+        data=data
+    )
+    
+    if response.status_code != 204:
+        print(f"Error uploading data: {response.status_code} {response.text}")
+        return
+
+    # Update chart title and properties
+    response = requests.patch(
+        f'https://api.datawrapper.de/v3/charts/{chart_id}',
+        headers={'Authorization': f'Bearer {os.environ["DATAWRAPPER_API"]}'},
+        json={
+            'title': f'{crime} - Observed vs Predicted',
+            'metadata': {
+                'visualize': {
+                    'y-grid': True,
+                    'y-axis-title': 'Number of Incidents',
+                    'x-grid': True
+                }
+            }
         }
-    })
+    )
     
-    dw.publish_chart(chart_id)
-    public_url = dw.get_chart_metadata(chart_id)['publicUrl']
-    print(f'Chart for {crime} updated successfully. View at: {public_url}')
+    if response.status_code != 200:
+        print(f"Error updating chart: {response.status_code} {response.text}")
+        return
+    
+    # Publish chart
+    response = requests.post(
+        f'https://api.datawrapper.de/v3/charts/{chart_id}/publish',
+        headers={'Authorization': f'Bearer {os.environ["DATAWRAPPER_API"]}'}
+    )
+    
+    if response.status_code != 200:
+        print(f"Error publishing chart: {response.status_code} {response.text}")
+        return
+
+    print(f'Chart for {crime} updated successfully. View at: {response.json()["publicUrl"]}')
 
 if __name__ == "__main__":
     try:
@@ -150,36 +176,26 @@ if __name__ == "__main__":
 
     for crime in crime_types:
         decomp = seasonal_decompose(week_sum[crime], period=52, model='additive', extrapolate_trend='freq')
-        week_sum['intervention'] = (week_sum.index >= treatment_time).astype(int)
-        week_sum['trend'] = decomp.trend
-        week_sum['seasonal'] = decomp.seasonal
-        week_sum['trend_intervention'] = week_sum['trend'] * week_sum['intervention']
-        model = sm.OLS(week_sum[crime], sm.add_constant(week_sum[['trend', 'seasonal', 'trend_intervention']])).fit()
-        week_sum[f'predicted_{crime}'] = model.predict(sm.add_constant(week_sum[['trend', 'seasonal', 'trend_intervention']]))
-        plt.figure(figsize=(10, 6))
-        plt.plot(week_sum[crime], label='Observed')
-        plt.plot(week_sum[f'predicted_{crime}'], label='Predicted', linestyle='--')
-        plt.title(f'{crime} - Observed vs Predicted')
-        plt.legend()
-        plt.grid()
-        plt.show()
-
-        file_path = f'{base_dir}{crime.replace(" ", "_").lower()}_predictions.csv'
-        week_sum.to_csv(file_path, columns=['ISO_Week', f'predicted_{crime}'], index=False)
+        week_sum[f'{crime}_seasonal'] = decomp.seasonal
+        week_sum[f'{crime}_trend'] = decomp.trend
+        week_sum[f'{crime}_resid'] = decomp.resid
+        decomp.trend.plot(title=f"{crime} Trend", figsize=(10, 6))
+        plt.savefig(f'{base_dir}{crime.replace(" ", "_").lower()}_trend.png')
+        plt.clf()
 
     chart_ids = {
-        'Reported Incident': 'qeS7S',
-        'Enforcement Driven Incidents': 'AMeVO',
-        'Simple-Cannabis': '4VXqm',
-        'Gun Offense': 'VFkbY',
-        'Criminal Sexual Assault': 'BkDU0',
-        'Aggravated Assault': 'nis8v',
-        'Violent Offense': 'NFIDi',
-        'Burglary': '9jMj4',
-        'Theft': 'HvDKE',
-        'Domestic Violence': 'W1NrO',
-        'Robbery': '2BNYv',
-        'Violent Gun Offense': 'eG0Xd'
+        'Reported Incident': 'chart_id_1',
+        'Enforcement Driven Incidents': 'chart_id_2',
+        'Simple-Cannabis': 'chart_id_3',
+        'Gun Offense': 'chart_id_4',
+        'Criminal Sexual Assault': 'chart_id_5',
+        'Aggravated Assault': 'chart_id_6',
+        'Violent Offense': 'chart_id_7',
+        'Burglary': 'chart_id_8',
+        'Theft': 'chart_id_9',
+        'Domestic Violence': 'chart_id_10',
+        'Robbery': 'chart_id_11',
+        'Violent Gun Offense': 'chart_id_12'
     }
 
     for crime in crime_types:
