@@ -1,4 +1,4 @@
-name: Analysis 
+name: Crime Data Analysis and Visualization
 
 on:
   push:
@@ -27,6 +27,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install pandas numpy matplotlib arviz pymc scipy statsmodels datawrapper
 
+      - name: Verify current directory
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "Listing contents of current directory:"
+          ls -la
+
+      - name: Verify script file exists
+        run: |
+          if [ ! -f "Interrupted time series analysis.py" ]; then
+            echo "Error: Script file 'Interrupted time series analysis.py' not found."
+            exit 1
+          fi
+
       - name: Run analysis script
         run: |
-          python Interrupted.py
+          python "Interrupted.py"
