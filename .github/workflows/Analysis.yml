@@ -29,4 +29,4 @@ jobs:
 
       - name: Run analysis script
         run: |
-          python Interrupted time series analysis.py  
+          python Interrupted time series analysis.py
