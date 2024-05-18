@@ -24,7 +24,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pandas numpy matplotlib arviz pymc scipy statsmodels datawrapper
+        pip install pandas numpy matplotlib arviz pymc scipy statsmodels requests
 
     - name: Set up Datawrapper API key
       env:
