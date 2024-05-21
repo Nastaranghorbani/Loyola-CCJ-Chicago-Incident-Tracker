@@ -85,9 +85,12 @@ if __name__ == "__main__":
 
     week_sum['ISO_Week'] = week_sum['year'].astype(str) + '-' + week_sum['week'].apply(lambda x: f'{x:02}')
     treatment_date = pd.to_datetime("2023-09-18")
-    treatment_iso_year = treatment_date.isocalendar().year
-    treatment_iso_week = treatment_date.isocalendar().week
+    treatment_iso_year, treatment_iso_week, _ = treatment_date.isocalendar()
     treatment_iso_week_str = f"{treatment_iso_year}-{treatment_iso_week:02}"
+
+    #treatment_iso_year = treatment_date.isocalendar().year
+    #treatment_iso_week = treatment_date.isocalendar().week
+    #treatment_iso_week_str = f"{treatment_iso_year}-{treatment_iso_week:02}"
 
     week_sum = week_sum.assign(time=np.arange(len(week_sum)))
     β0 = 0
