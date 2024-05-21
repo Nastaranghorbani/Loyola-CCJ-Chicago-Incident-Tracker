@@ -53,7 +53,7 @@ def update_and_publish_chart(crime, base_dir, chart_ids):
     title = f'{crime} - Observed vs Predicted'
     
     dw.update_chart(chart_id, {
-        'title': title,  # Ensure title is a string
+        'title': str(title),  # Ensure title is explicitly a string
         'visualize': {
             'y-grid': True,
             'y-axis-title': 'Number of Incidents',
