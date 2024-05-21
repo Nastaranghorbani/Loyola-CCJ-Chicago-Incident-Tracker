@@ -53,11 +53,10 @@ def update_and_publish_chart(crime, base_dir, chart_ids):
     payload = {
         'visualize': {
             'y-grid': True,
-            
             'x-grid': True
         }
     }
-    
+
     print(f"Updating chart with ID {chart_id} and payload: {payload}")
     
     dw.update_chart(chart_id, payload)
@@ -156,7 +155,6 @@ if __name__ == "__main__":
         plt.figure(figsize=(10, 6))
         plt.plot(week_sum[crime], label='Observed')
         plt.plot(week_sum[f'predicted_{crime}'], label='Predicted', linestyle='--')
-        #plt.title(f'{crime} - Observed vs Predicted')
         plt.legend()
         plt.grid()
         plt.show()
