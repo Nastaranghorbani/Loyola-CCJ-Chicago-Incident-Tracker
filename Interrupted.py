@@ -50,16 +50,16 @@ def update_and_publish_chart(crime, base_dir, chart_ids):
 
     dw.add_data(chart_id, file_path)
     
-    title = f'{crime} - Observed vs Predicted'
-    
-    dw.update_chart(chart_id, {
-        'title': str(title),  # Ensure title is explicitly a string
+    payload = {
         'visualize': {
             'y-grid': True,
             'y-axis-title': 'Number of Incidents',
             'x-grid': True
         }
-    })
+    }
+    print(f"Updating chart with ID {chart_id} and payload: {payload}")
+    
+    dw.update_chart(chart_id, payload)
     
     dw.publish_chart(chart_id)
     public_url = dw.get_chart_metadata(chart_id)['publicUrl']
