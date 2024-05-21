@@ -1,5 +1,3 @@
-
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -55,7 +53,7 @@ def update_and_publish_chart(crime, base_dir, chart_ids):
     title = f'{crime} - Observed vs Predicted'
     
     dw.update_chart(chart_id, {
-        'title': str(title),  # Ensure title is a string
+        'title': title,  # Ensure title is a string
         'visualize': {
             'y-grid': True,
             'y-axis-title': 'Number of Incidents',
@@ -87,10 +85,6 @@ if __name__ == "__main__":
     treatment_date = pd.to_datetime("2023-09-18")
     treatment_iso_year, treatment_iso_week, _ = treatment_date.isocalendar()
     treatment_iso_week_str = f"{treatment_iso_year}-{treatment_iso_week:02}"
-
-    #treatment_iso_year = treatment_date.isocalendar().year
-    #treatment_iso_week = treatment_date.isocalendar().week
-    #treatment_iso_week_str = f"{treatment_iso_year}-{treatment_iso_week:02}"
 
     week_sum = week_sum.assign(time=np.arange(len(week_sum)))
     β0 = 0
@@ -124,7 +118,7 @@ if __name__ == "__main__":
     plt.show()
 
     with pm.Model() as model:
-        time = pm.Data("time", pre["time"].to_numpy(), dims="obs_id")
+        time = pm.Data("time", pre["time"].to_numpy(), dims="obs_id", mutable=False)
         beta0 = pm.Normal("beta0", 0, 1)
         beta1 = pm.Normal("beta1", 0, 0.2)
         mu = pm.Deterministic("mu", beta0 + (beta1 * time), dims="obs_id")
@@ -133,8 +127,8 @@ if __name__ == "__main__":
 
     outcome_variable = 'Theft'
     with pm.Model() as model:
-        time = pm.Data("time", pre["time"].to_numpy(), dims="obs_id")
-        observed_data = pm.Data("observed_data", pre[outcome_variable].to_numpy(), dims="obs_id")
+        time = pm.Data("time", pre["time"].to_numpy(), dims="obs_id", mutable=False)
+        observed_data = pm.Data("observed_data", pre[outcome_variable].to_numpy(), dims="obs_id", mutable=False)
         beta0 = pm.Normal("beta0", 0, 1)
         beta1 = pm.Normal("beta1", 0, 0.2)
         mu = pm.Deterministic("mu", beta0 + (beta1 * time), dims="obs_id")
