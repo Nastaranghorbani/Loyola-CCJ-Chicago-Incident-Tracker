@@ -50,9 +50,7 @@ def update_and_publish_chart(crime, base_dir, chart_ids):
 
     dw.add_data(chart_id, file_path)
 
-    title = f'{crime} - Observed vs Predicted'
     payload = {
-        'title': str(title),  # Ensure title is explicitly a string
         'visualize': {
             'y-grid': True,
             'x-grid': True
@@ -68,11 +66,7 @@ def update_and_publish_chart(crime, base_dir, chart_ids):
     print(f'Chart for {crime} updated successfully. View at: {public_url}')
 
 if __name__ == "__main__":
-    try:
-        df = pd.read_csv('https://raw.githubusercontent.com/Nastaranghorbani/Loyola-CCJ-Chicago-Incident-Tracker/main/data/inc_data_selected.csv')
-    except Exception as e:
-        print(f"Error loading data: {e}")
-        exit(1)
+    df = pd.read_csv('https://raw.githubusercontent.com/Nastaranghorbani/Loyola-CCJ-Chicago-Incident-Tracker/main/data/inc_data_selected.csv')
 
     df['date'] = pd.to_datetime(df['date'])
     df['week'] = df['date'].dt.isocalendar().week
