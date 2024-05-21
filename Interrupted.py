@@ -51,6 +51,7 @@ def update_and_publish_chart(crime, base_dir, chart_ids):
     dw.add_data(chart_id, file_path)
 
     payload = {
+        'title': '',  # Explicitly setting title to an empty string
         'visualize': {
             'y-grid': True,
             'x-grid': True
