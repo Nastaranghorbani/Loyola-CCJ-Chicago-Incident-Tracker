@@ -49,7 +49,14 @@ def update_and_publish_chart(crime, base_dir, chart_ids):
         return
 
     dw.add_data(chart_id, file_path)
-    
+
+    payload = {
+        'visualize': {
+            'y-grid': True,
+            
+            'x-grid': True
+        }
+    }
     
     print(f"Updating chart with ID {chart_id} and payload: {payload}")
     
