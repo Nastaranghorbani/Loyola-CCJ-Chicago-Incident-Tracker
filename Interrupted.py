@@ -50,7 +50,9 @@ def update_and_publish_chart(crime, base_dir, chart_ids):
 
     dw.add_data(chart_id, file_path)
 
+    title = f'{crime} - Observed vs Predicted'
     payload = {
+        'title': str(title),  # Ensure title is explicitly a string
         'visualize': {
             'y-grid': True,
             'x-grid': True
