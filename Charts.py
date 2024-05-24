@@ -8,7 +8,40 @@ from datetime import datetime
 
 
 
+
+
+
+# Function to check if a week has 7 days of data
+def is_full_week(df, year, week):
+    start_date = datetime.strptime(f'{year}-W{week}-1', "%Y-W%W-%w")
+    end_date = start_date + timedelta(days=6)
+    week_data = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
+    return len(week_data) >= 7
+
+# Function to filter the dataframe to include only full weeks
+def filter_full_weeks(df):
+    # Calculate the number of days of data available for each year and week
+    df['day_of_week'] = df['date'].dt.dayofweek
+    week_day_counts = df.groupby(['year', 'week'])['day_of_week'].nunique().reset_index()
+    
+    # Keep only the weeks with 7 days of data
+    full_weeks = week_day_counts[week_day_counts['day_of_week'] == 7][['year', 'week']]
+    
+    # Merge to keep only full weeks in the original dataframe
+    df_full_weeks = pd.merge(df, full_weeks, on=['year', 'week'], how='inner')
+    return df_full_weeks.drop(columns=['day_of_week'])
+
+
+
+
+
+
 if __name__ == "__main__":
+
+
+
+
+    
     # Import data
     df = pd.read_csv('https://raw.githubusercontent.com/Nastaranghorbani/Loyola-CCJ-Chicago-Incident-Tracker/main/data/inc_data_selected.csv')
 
@@ -21,12 +54,18 @@ if __name__ == "__main__":
     # Extract the year from the 'date' column and create a new column 'year'
     df['year'] = df['date'].dt.year
 
-    # Group the data by 'year' and 'week'
-    week_sum = df.groupby(['year', 'week'])[['Reported Incident', 'Enforcement Driven Incidents',
-                                             'Simple-Cannabis', 'Gun Offense', 'Criminal Sexual Assault',
-                                             'Aggravated Assault', 'Violent Offense', 'Burglary', 'Theft',
-                                             'Domestic Violence', 'Robbery', 'Violent Gun Offense']].sum().reset_index()
+    # Filter the dataframe to include only full weeks
+    df_full_weeks = filter_full_weeks(df)
 
+    # Group the data by 'year' and 'week'
+    week_sum = df_full_weeks.groupby(['year', 'week'])[['Reported Incident', 'Enforcement Driven Incidents',
+                                                        'Simple-Cannabis', 'Gun Offense', 'Criminal Sexual Assault',
+                                                        'Aggravated Assault', 'Violent Offense', 'Burglary', 'Theft',
+                                                        'Domestic Violence', 'Robbery', 'Violent Gun Offense']].sum().reset_index()
+
+
+
+    
     # Create 'ISO_Week' column
     week_sum['ISO_Week'] = week_sum['year'].astype(str) + '-' + week_sum['week'].apply(lambda x: f'{x:02}')
 
@@ -51,26 +90,15 @@ if __name__ == "__main__":
     for column in comparison_columns:
         data_2024[f'{column}_vs_average'] = data_2024[column] - data_2024[f'{column}_average']
 
-    # Display the comparison
-    comparison_df = data_2024[['ISO_Week'] + [f'{col}_vs_average' for col in comparison_columns]]
-    print(comparison_df)
 
-    # Datawrapper API setup
-    API_KEY = os.environ.get('DATAWRAPPER_API')
-    dw = Datawrapper(access_token=API_KEY)
+    
+    # Ensuring the latest week is a full week
+    latest_week = data_2024.iloc[-1]
+    if not is_full_week(df, latest_week['year'], latest_week['week']):
+        data_2024 = data_2024.iloc[:-1]
+        latest_week = data_2024.iloc[-1]
 
-    # Get the current date and the current week number
-    current_date = datetime.now()
-    current_week = current_date.isocalendar()[1]
-    current_year = current_date.year
-
-    # Filter out the current week if the data is still being collected
-    if current_week == week_sum_filtered['week'].max() and current_year == week_sum_filtered['year'].max():
-        latest_week = week_sum_filtered[week_sum_filtered['year'] == 2024].iloc[-2]
-    else:
-        latest_week = week_sum_filtered[week_sum_filtered['year'] == 2024].iloc[-1]
-
-    # Get the first day of the latest week
+    # Getting the first day of the latest week
     first_day_of_week = datetime.strptime(f"{latest_week['year']}-W{int(latest_week['week'])}-1", "%Y-W%W-%w").strftime("%B %d")
 
     # Create and update charts with dynamic descriptions
@@ -92,6 +120,15 @@ if __name__ == "__main__":
         'Violent Gun Offense': 'eG0Xd'
     }
 
+
+
+
+
+    # Datawrapper API setup
+    API_KEY = os.environ.get('DATAWRAPPER_API')
+    dw = Datawrapper(access_token=API_KEY)
+
+    
     for column in columns:
         # Calculate the percentage change, handling division by zero or NaN values
         avg_value = latest_week[f'{column}_average']
@@ -121,3 +158,4 @@ if __name__ == "__main__":
 
         # Publish the chart
         dw.publish_chart(chart_id)
+
