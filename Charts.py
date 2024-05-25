@@ -163,13 +163,6 @@ if __name__ == "__main__":
             byline=" "
         )
 
-
-        # Update the chart title using update_metadata
-        dw.update_metadata(
-            chart_id,
-            title=f"Chart for {column}"
-        )
-
         
 
         # Publish the chart
