@@ -93,6 +93,8 @@ if __name__ == "__main__":
                    'Violent Offense', 'Burglary', 'Theft', 'Domestic Violence', 
                    'Robbery', 'Violent Gun Offense']
 
+    main_title = 'Chicago Crime Incidents - Actual vs. Predicted'
+
     for crime_type in crime_types:
         decomp = seasonal_decompose(week_sum[crime_type], period=52, model='additive', extrapolate_trend='freq')
         week_sum['trend'] = decomp.trend
@@ -100,32 +102,15 @@ if __name__ == "__main__":
         week_sum['trend_intervention'] = week_sum['trend'] * week_sum['intervention']
         model = sm.OLS(week_sum[crime_type], sm.add_constant(week_sum[['trend', 'seasonal', 'trend_intervention']])).fit()
         week_sum[f'predicted_{crime_type}'] = model.predict(sm.add_constant(week_sum[['trend', 'seasonal', 'trend_intervention']]))
-
-        plt.figure(figsize=(10, 6))
-        plt.plot(week_sum.index, week_sum[crime_type], label='Actual')
-        plt.plot(week_sum.index, week_sum[f'predicted_{crime_type}'], label='Predicted')
-        plt.axvline(x=treatment_time, color='red', linestyle='--', label='Intervention')
-        plt.title(crime_type)
-        plt.legend()
-        plt.show()
-
-        # Prepare data for Datawrapper
-        data = week_sum.reset_index()[['date', crime_type, f'predicted_{crime_type}']]
-        data.columns = ['Date', 'Actual', 'Predicted']
-
-        # Update Datawrapper chart data
-        dw.update_chart(chart_ids[crime_type], data.to_csv(index=False))
-
-        # Update Datawrapper chart metadata for series colors
-        chart_metadata = {
-            "metadata": {
-                "visualize": {
-                    "series": [
-                        {"name": "Actual", "color": "blue"},
-                        {"name": "Predicted", "color": "red"}
-                    ]
-                }
-            }
-        }
-        dw.update_metadata(chart_ids[crime_type], chart_metadata)
-        dw.publish_chart(chart_ids[crime_type])
+    
+        # Updating Datawrapper chart
+        chart_id = chart_ids[crime_type]
+        data_to_add = week_sum.reset_index()[['date', crime_type, f'predicted_{crime_type}']]
+        data_to_add.columns = ['Date', 'Actual', 'Predicted']
+        dw.add_data(chart_id, data_to_add.to_csv(index=False))
+        
+        dw.update_chart(chart_id, metadata={
+            'title': f'{crime_type} - Actual vs. Predicted',
+            'describe': main_title
+        })
+        dw.publish_chart(chart_id)
