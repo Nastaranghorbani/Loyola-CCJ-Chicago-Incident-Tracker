@@ -9,6 +9,8 @@ from orbit.diagnostics.plot import plot_predicted_data
 from statsmodels.tsa.seasonal import seasonal_decompose
 from datetime import datetime
 from datawrapper import Datawrapper
+import matplotlib.dates as mdates
+
 
 # Function to format x-axis
 def format_x_axis(ax, minor=False):
