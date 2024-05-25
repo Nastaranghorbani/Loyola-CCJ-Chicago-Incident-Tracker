@@ -157,12 +157,20 @@ if __name__ == "__main__":
         
         dw.update_description(
             chart_id,
-            title=f"Chart for {column}",
             intro=description,
             source_name=" ",
             source_url=" ",
             byline=" "
         )
+
+
+        # Update the chart title using update_metadata
+        dw.update_metadata(
+            chart_id,
+            title=f"Chart for {column}"
+        )
+
+        
 
         # Publish the chart
         dw.publish_chart(chart_id)
