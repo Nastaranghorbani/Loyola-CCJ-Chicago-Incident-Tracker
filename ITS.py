@@ -107,8 +107,8 @@ if __name__ == "__main__":
     
         # Updating Datawrapper chart
         chart_id = chart_ids[crime_type]
-        data_to_add = week_sum.reset_index()[['date', crime_type, f'predicted_{crime_type}']]
-        data_to_add.columns = ['Date', 'Actual', 'Predicted']
+        #data_to_add = week_sum.reset_index()[['date', crime_type, f'predicted_{crime_type}']]
+        #data_to_add.columns = ['Date', 'Actual', 'Predicted']
         dw.add_data(chart_id, data_to_add.to_csv(index=False))
         
         dw.update_chart(chart_id, metadata={
