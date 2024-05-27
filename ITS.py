@@ -56,18 +56,18 @@ dw = Datawrapper(access_token=API_KEY)
 
 # Chart IDs dictionary
 chart_ids = {
-    'Reported Incident': 'qeS7S',
-    'Enforcement Driven Incidents': 'AMeVO',
-    'Simple-Cannabis': '4VXqm',
-    'Gun Offense': 'VFkbY',
-    'Criminal Sexual Assault': 'BkDU0',
-    'Aggravated Assault': 'nis8v',
-    'Violent Offense': 'NFIDi',
-    'Burglary': '9jMj4',
-    'Theft': 'HvDKE',
-    'Domestic Violence': 'W1NrO',
-    'Robbery': '2BNYv',
-    'Violent Gun Offense': 'eG0Xd'
+    'Reported Incident': 'UV70R',
+    'Enforcement Driven Incidents': '0ZAre',
+    'Simple-Cannabis': 'qjs8a',
+    'Gun Offense': 'Xn9w3',
+    'Criminal Sexual Assault': 'KV02G',
+    'Aggravated Assault': 't2Duz',
+    'Violent Offense': 'TGCUm',
+    'Burglary': '8vg1Q',
+    'Theft': '3jFDQ',
+    'Domestic Violence': 'hyQWa',
+    'Robbery': 'feB8w',
+    'Violent Gun Offense': 'NMbX2'
 }
 
 if __name__ == "__main__":
